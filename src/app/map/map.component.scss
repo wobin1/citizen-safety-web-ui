@@ -1,0 +1,11 @@
+// You can define custom map styles here if needed.
+// For example, to hide certain POIs or change map colors.
+// This is an example to make the map look a bit cleaner.
+:host {
+  display: block; // Ensures the host element takes up space
+}
+
+agm-map {
+  // Tailwind classes already applied in HTML: w-full h-96 rounded-lg shadow-md
+  // You can add more specific CSS here if needed, but Tailwind handles most of it.
+}

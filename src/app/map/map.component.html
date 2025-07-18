@@ -1,0 +1,26 @@
+<google-map
+  height="100vh"
+  width="100%"
+  [zoom]="zoom"
+  [center]="center"
+  [options]="mapOptions"
+  class="rounded-lg shadow-md"
+>
+  <map-marker
+    *ngFor="let incident of incidents"
+    [position]="{lat: incident.latitude, lng: incident.longitude}"
+    [options]="{ icon: getMarkerIcon(incident.status), title: incident.type + ' - ' + incident.location }"
+    (mapClick)="markerClick($event, incident)"
+  >
+    <map-info-window>
+      <div class="p-2">
+        <h3 class="font-bold text-lg mb-1">{{ incident.type }}</h3>
+        <p class="text-sm text-gray-700">{{ incident.location }}</p>
+        <p class="text-xs text-gray-500">Status: {{ incident.status | titlecase }}</p>
+        <p class="text-xs text-gray-500">Reported: {{ incident.reportedAt | date:'short' }}</p>
+        <!-- You might need Router or EventEmitter here to navigate -->
+        <a href="#" class="text-blue-600 hover:underline text-sm mt-2 block" (click)="markerClick(null, incident)">View Details</a>
+      </div>
+    </map-info-window>
+  </map-marker>
+</google-map>
