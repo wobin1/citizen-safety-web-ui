@@ -5,15 +5,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 // import { IncidentService } from '../incident.service';
 import { MapComponent } from '../map/map.component';
 import { IncidentService } from '../services/incident.service';
+import { ModalComponent } from '../shared/modal/modal.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-incident-detail',
-  imports: [CommonModule, MapComponent],
+  imports: [CommonModule, MapComponent, ModalComponent, FormsModule],
   templateUrl: './incident-detail.component.html',
   styleUrl: './incident-detail.component.scss'
 })
 export class IncidentDetailComponent {
   incident: any; // Define a proper interface/type for Incident
+
+  // Modal state for rejection
+  showRejectModal: boolean = false;
+  rejectionReason: string = '';
+  isRejecting: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,11 +56,47 @@ export class IncidentDetailComponent {
     // this.incidentService.updateIncidentStatus(this.incident.id, 'validated').subscribe(...);
   }
 
+  // Open the rejection modal
+  openRejectModal(): void {
+    this.rejectionReason = '';
+    this.showRejectModal = true;
+  }
+
+  // Close the rejection modal
+  closeRejectModal(): void {
+    this.showRejectModal = false;
+    this.rejectionReason = '';
+  }
+
+  // Confirm rejection
+  confirmReject(reason: string): void {
+    if (!this.incident) return;
+    if (!reason || !reason.trim()) {
+      alert('Rejection reason is required.');
+      return;
+    }
+    this.isRejecting = true;
+    this.incidentService.rejectIncident(this.incident.id, reason).subscribe({
+      next: () => {
+        alert('Incident rejected successfully.');
+        this.incident.status = 'REJECTED';
+        this.closeRejectModal();
+      },
+      error: (err: any) => {
+        alert('Failed to reject incident: ' + (err?.error?.message || 'Unknown error'));
+      },
+      complete: () => {
+        this.isRejecting = false;
+      }
+    });
+  }
+
   rejectIncident(): void {
     // Call service to update incident status to 'rejected'
     console.log('Rejecting incident:', this.incident.id);
     this.incident.status = 'rejected'; // Update UI immediately
     // this.incidentService.updateIncidentStatus(this.incident.id, 'rejected').subscribe(...);
+    this.openRejectModal();
   }
 
   dispatchAlert(): void {
