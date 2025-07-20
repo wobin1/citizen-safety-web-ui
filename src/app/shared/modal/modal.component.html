@@ -1,0 +1,42 @@
+<div *ngIf="isVisible" class="fixed inset-0 z-50 flex items-center justify-center" style="background: rgba(0,0,0,0.3); backdrop-filter: blur(2px);" (click)="onCancel()">
+  <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md relative z-60" (click)="onModalContentClick($event)">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-gray-800">{{ title }}</h2>
+      <button (click)="onCancel()" class="text-gray-500 hover:text-gray-700">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <ng-content></ng-content>
+    <div class="mb-4">
+      <label for="rejectionReason" class="block text-sm font-medium text-gray-700 mb-1">
+        Reason for Rejection <span class="text-red-500">*</span>
+      </label>
+      <textarea
+        id="rejectionReason"
+        name="rejectionReason"
+        [(ngModel)]="internalReason"
+        rows="3"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+        placeholder="e.g., Duplicate report, false alarm, insufficient information"
+        [disabled]="confirmButtonText === 'Rejecting...'"
+        required
+      ></textarea>
+    </div>
+    <div class="flex justify-end space-x-3 mt-6">
+      <button
+        (click)="onCancel()"
+        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200"
+      >
+        {{ cancelButtonText }}
+      </button>
+      <button
+        (click)="onConfirm()"
+        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors duration-200"
+      >
+        {{ confirmButtonText }}
+      </button>
+    </div>
+  </div>
+</div>

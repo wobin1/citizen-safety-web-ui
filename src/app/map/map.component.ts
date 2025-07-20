@@ -7,8 +7,8 @@ export interface Incident {
   id: string;
   type: string;
   location: string;
-  latitude: number;
-  longitude: number;
+  location_lat: number;
+  location_lon: number;
   status: string;
   reportedAt: Date;
   description?: string;
@@ -60,8 +60,8 @@ export class MapComponent {
   ngOnInit(): void {
     if (this.incidents && this.incidents.length > 0) {
       // Calculate average latitude/longitude to center the map
-      const totalLat = this.incidents.reduce((sum, inc) => sum + inc.latitude, 0);
-      const totalLng = this.incidents.reduce((sum, inc) => sum + inc.longitude, 0);
+      const totalLat = this.incidents.reduce((sum, inc) => sum + inc.location_lat, 0);
+      const totalLng = this.incidents.reduce((sum, inc) => sum + inc.location_lon, 0);
       this.center = {
         lat: totalLat / this.incidents.length,
         lng: totalLng / this.incidents.length

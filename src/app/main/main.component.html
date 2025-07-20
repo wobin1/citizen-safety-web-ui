@@ -1,0 +1,49 @@
+<div class="flex h-screen bg-gray-100">
+  <aside class="w-64 bg-gray-800 text-white p-4 shadow-lg">
+    <div class="text-xl font-bold mb-6 text-center">EMS Dashboard</div>
+    <nav>
+      <ul class="space-y-2">
+        <li>
+          <a
+            (click)="route('/dashboard')"
+            [ngClass]="{
+              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+              'bg-gray-900 text-white': getCurrentRoute() === '/app/dashboard',
+              'hover:bg-gray-700': getCurrentRoute() !== '/app/dashboard'
+            }"
+          >
+            <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+          </a>
+        </li>
+        <li>
+          <a
+            (click)="route('/incidents')"
+            [ngClass]="{
+              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+              'bg-gray-900 text-white': getCurrentRoute() === '/app/incidents',
+              'hover:bg-gray-700': getCurrentRoute() !== '/app/incidents'
+            }"
+          >
+            <i class="fas fa-exclamation-triangle mr-2"></i> All Incidents
+          </a>
+        </li>
+        <li>
+          <a
+            (click)="route('/maps')"
+            [ngClass]="{
+              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+              'bg-gray-900 text-white': getCurrentRoute() === '/app/maps',
+              'hover:bg-gray-700': getCurrentRoute() !== '/app/maps'
+            }"
+          >
+            <i class="fas fa-map-marked-alt mr-2"></i> Map View
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="flex-1 overflow-auto p-6">
+    <router-outlet></router-outlet>
+  </main>
+</div>

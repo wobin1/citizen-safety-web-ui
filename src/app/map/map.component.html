@@ -8,7 +8,7 @@
 >
   <map-marker
     *ngFor="let incident of incidents"
-    [position]="{lat: incident.latitude, lng: incident.longitude}"
+    [position]="{lat: incident.location_lat, lng: incident.location_lon}"
     [options]="{ icon: getMarkerIcon(incident.status), title: incident.type + ' - ' + incident.location }"
     (mapClick)="markerClick($event, incident)"
   >

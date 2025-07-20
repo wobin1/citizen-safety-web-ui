@@ -1,10 +1,10 @@
 <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Overview</h1>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
   <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
     <div>
       <h2 class="text-xl font-semibold text-gray-700">Pending Incidents</h2>
-      <p class="text-4xl font-bold text-blue-600 mt-2">12</p>
+      <p class="text-4xl font-bold text-blue-600 mt-2">{{stats?.pending}}</p>
     </div>
     <i class="fas fa-hourglass-half text-5xl text-blue-300"></i>
   </div>
@@ -18,25 +18,68 @@
   <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
     <div>
       <h2 class="text-xl font-semibold text-gray-700">Validated Reports</h2>
-      <p class="text-4xl font-bold text-purple-600 mt-2">28</p>
+      <p class="text-4xl font-bold text-purple-600 mt-2">{{stats?.validated}}</p>
     </div>
     <i class="fas fa-check-circle text-5xl text-purple-300"></i>
+  </div>
+
+  <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+    <div>
+      <h2 class="text-xl font-semibold text-gray-700">Rejected Reports</h2>
+      <p class="text-4xl font-bold text-red-600 mt-2">{{stats?.rejected}}</p>
+    </div>
+    <i class="fas fa-times-circle text-5xl text-red-300"></i> <!-- Changed icon for rejected -->
   </div>
 </div>
 
 <div class="bg-white p-6 rounded-lg shadow-md">
   <h2 class="text-xl font-semibold mb-4 text-gray-800">Recent Pending Incidents</h2>
   <ul class="space-y-4">
-    <li class="border-b pb-4 last:border-b-0">
+    <li *ngFor="let incident of stats?.latest_pending" class="border-b pb-4 last:border-b-0">
       <div class="flex justify-between items-center mb-1">
-        <span class="text-lg font-medium text-gray-900">Road Accident (A1 Highway)</span>
-        <span class="text-sm text-gray-500">2 mins ago</span>
+        <span class="text-lg font-medium text-gray-900">
+          {{ incident!.type }}
+          <span *ngIf="incident.description">({{ incident!.description | slice:0:30 }}{{ incident.description!.length > 30 ? '...' : '' }})</span>
+        </span>
+        <span class="text-sm text-gray-500">
+          {{ incident.created_at | date:'short' }}
+        </span>
       </div>
-      <p class="text-gray-700 mb-2">Multiple vehicle collision, possible injuries.</p>
+      <p class="text-gray-700 mb-2">
+        {{ incident.description || 'No description provided.' }}
+      </p>
       <div class="flex space-x-2">
-        <button class="bg-blue-500 hover:bg-blue-600 text-white text-sm py-1 px-3 rounded-full transition-colors duration-200">Review</button>
-        <button class="bg-red-500 hover:bg-red-600 text-white text-sm py-1 px-3 rounded-full transition-colors duration-200">Reject</button>
+        <button (click)="route(incident.id)" class="bg-blue-500 hover:bg-blue-600 text-white text-sm py-1 px-3 rounded-full transition-colors duration-200">Review</button>
+        <!-- Modified Reject button to open modal -->
+        <button
+          (click)="openRejectModal(incident)"
+          class="bg-red-500 hover:bg-red-600 text-white text-sm py-1 px-3 rounded-full transition-colors duration-200"
+          [disabled]="isRejecting"
+        >
+          <span *ngIf="!isRejecting">Reject</span>
+          <span *ngIf="isRejecting" class="flex items-center">
+            <svg class="animate-spin h-4 w-4 mr-1 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Rejecting...
+          </span>
+        </button>
       </div>
     </li>
+    <li *ngIf="!stats?.latest_pending?.length" class="text-gray-500 text-center py-4">No recent pending incidents.</li>
     </ul>
 </div>
+
+<!-- Rejection Confirmation Modal -->
+<app-modal
+  [isVisible]="showRejectModal"
+  [title]="'Reject Report: ' + (incidentToReject?.id || '')"
+  [confirmButtonText]="isRejecting ? 'Rejecting...' : 'Confirm Rejection'"
+  [cancelButtonText]="'Cancel'"
+  (close)="closeRejectModal()"
+  (confirm)="confirmReject($event)"
+>
+  <p class="text-gray-700 mb-4">Are you sure you want to reject this report?</p>
+  <p class="text-sm text-gray-500">This action cannot be undone.</p>
+</app-modal>

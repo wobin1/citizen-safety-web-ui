@@ -3,10 +3,12 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 // Import a service for fetching/updating incidents (e.g., IncidentService)
 // import { IncidentService } from '../incident.service';
+import { MapComponent } from '../map/map.component';
+import { IncidentService } from '../services/incident.service';
 
 @Component({
   selector: 'app-incident-detail',
-  imports: [CommonModule],
+  imports: [CommonModule, MapComponent],
   templateUrl: './incident-detail.component.html',
   styleUrl: './incident-detail.component.scss'
 })
@@ -16,27 +18,26 @@ export class IncidentDetailComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    // private incidentService: IncidentService // Inject your service here
+    private incidentService: IncidentService // Inject your service here
   ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const incidentId = params.get('id');
       if (incidentId) {
-        // In a real app, fetch incident data from a service based on incidentId
-        // Example static data for demonstration:
-        this.incident = {
-          id: incidentId,
-          type: 'Road Accident',
-          description: 'Car vs. Motorcycle, injuries reported. On A1 highway near exit 5.',
-          location: 'A1 Highway, Exit 5',
-          latitude: 52.3702, // Example coordinates for Amsterdam
-          longitude: 4.8952,
-          reporter: 'John Doe',
-          reportedAt: new Date(Date.now() - 1800000),
-          status: 'pending', // Can be 'pending', 'validated', 'rejected', 'false', 'dispatched'
-          photos: ['https://via.placeholder.com/150/0000FF/FFFFFF?text=Photo+1', 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Photo+2'] // Example photo URLs
-        };
+        // Fetch incident data from the IncidentService based on incidentId
+        // Make sure to inject IncidentService in the constructor and uncomment the import
+        this.incidentService.getIncident(incidentId).subscribe(
+          (incidentData) => {
+            this.incident = incidentData.data;
+            console.log(this.incident)
+          },
+          (error) => {
+            console.error('Failed to fetch incident:', error);
+            this.incident = null;
+          }
+        );
+        // For now, fallback to null if not found
       }
     });
   }
