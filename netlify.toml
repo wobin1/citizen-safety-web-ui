@@ -1,0 +1,19 @@
+# netlify.toml
+
+# This file configures Netlify settings for your site.
+# It is placed in the root of your project directory.
+
+# Redirects and Rewrites
+# This is crucial for Single Page Applications (SPAs) like Angular.
+# It ensures that all routes that don't match a static file
+# are served by index.html, allowing the Angular router to handle the routing client-side.
+[[redirects]]
+  from = "/*"       # Match all routes (any path)
+  to = "/index.html"  # Serve the index.html file
+  status = 200      # Use status 200 for a rewrite (the browser won't see a redirect)
+  force = false     # By default, redirects are not forced (e.g., existing files like /main.js are served first)
+
+# Optional: You can add other Netlify configurations here, such as build settings.
+# [build]
+#   publish = "dist/your-project-name" # Replace 'your-project-name' with your actual Angular build output folder name (usually inside 'dist')
+#   command = "ng build --configuration=production" # Your command to build the Angular application for production
