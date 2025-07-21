@@ -32,10 +32,13 @@ export class LoginComponent {
       next: (response) => {
         console.log('Login successful!', response.status);
         this.router.navigate(['/dashboard']); // Navigate to dashboard on success
+        this.isLoading = false;
+
       },
       error: (err) => {
         console.error('Login failed in component:', err);
         this.errorMessage = err.message || 'Invalid email or password.';
+        this.isLoading = false;
       },
       complete: () => {
         this.isLoading = false;
