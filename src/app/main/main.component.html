@@ -29,6 +29,30 @@
         </li>
         <li>
           <a
+            (click)="route('/alerts')"
+            [ngClass]="{
+              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+              'bg-gray-900 text-white': getCurrentRoute() === '/app/alerts',
+              'hover:bg-gray-700': getCurrentRoute() !== '/app/alerts'
+            }"
+          >
+            <i class="fas fa-bell mr-2"></i> Alerts
+          </a>
+        </li>
+        <li>
+          <a
+            (click)="route('/emergency')"
+            [ngClass]="{
+              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+              'bg-gray-900 text-white': getCurrentRoute() === '/app/emergency',
+              'hover:bg-gray-700': getCurrentRoute() !== '/app/emergency'
+            }"
+          >
+            <i class="fas fa-ambulance mr-2"></i> Emergency
+          </a>
+        </li>
+        <li>
+          <a
             (click)="route('/maps')"
             [ngClass]="{
               'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,

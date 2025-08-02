@@ -1,8 +1,8 @@
 <h1 class="text-3xl font-bold mb-6 text-gray-800">All Incidents</h1>
 
-<div class="mb-4 flex space-x-4">
-  <input [(ngModel)]="search" (ngModelChange)="onSearchChange($event)" type="text" placeholder="Search incidents..." class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-  <select [(ngModel)]="filter" (change)="filterIncident(filter)" class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+<div class="mb-4 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+  <input [(ngModel)]="search" (ngModelChange)="onSearchChange($event)" type="text" placeholder="Search incidents..." class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 w-full sm:w-auto">
+  <select [(ngModel)]="filter" (change)="filterIncident(filter)" class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 w-full sm:w-auto">
     <option value="">All Statuses</option>
     <option value="PENDING">Pending</option>
     <option value="VALIDATED">Validated</option>
@@ -12,30 +12,30 @@
   </select>
 </div>
 
-<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<div class="bg-white rounded-lg shadow-md overflow-x-auto">
   <table class="min-w-full divide-y divide-gray-200">
     <thead class="bg-gray-50">
       <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reported At</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reported At</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
-      <tr *ngFor="let incident of incidents.data.incidents">
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ incident.description }}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ incident!.type }}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+      <tr *ngFor="let incident of incidents.data.incidents" class="hover:bg-gray-50">
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 break-words max-w-xs">{{ incident.description }}</td>
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ incident!.type }}</td>
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
           @if (incident.location_lan || incident.location_lon) {
             {{ incident!.location_lat }}, {{incident!.location_lon}}
           } @else {
             <span class="text-gray-400 italic">No location</span>
           }
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
           <ng-container [ngSwitch]="incident.status">
             <span *ngSwitchCase="'PENDING'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
               {{ incident.status | titlecase }}
@@ -57,22 +57,22 @@
             </span>
           </ng-container>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ incident!.created_at | date:'short' }}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-          <a (click)="route('incidents/' + incident.id)" class="text-blue-600 hover:text-blue-900 mr-4">View</a>
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ incident!.created_at | date:'short' }}</td>
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium flex flex-col sm:flex-row gap-2 sm:gap-0">
+          <a (click)="route('incidents/' + incident.id)" class="text-blue-600 hover:text-blue-900 sm:mr-4">View</a>
           <button *ngIf="incident!.status === 'pending'" class="text-green-600 hover:text-green-900">Validate</button>
         </td>
       </tr>
       <tr *ngIf="incidents?.data?.length === 0">
-        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No incidents found.</td>
+        <td colspan="6" class="px-4 sm:px-6 py-4 text-center text-gray-500">No incidents found.</td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <!-- Pagination Controls -->
-<div class="flex items-center justify-between mt-4">
-  <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50">Back</button>
-  <span class="text-gray-700">Page {{ currentPage }} of {{ totalPages }}</span>
-  <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50">Next</button>
+<div class="flex flex-col sm:flex-row items-center justify-between mt-4 space-y-2 sm:space-y-0">
+  <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 w-full sm:w-auto mb-2 sm:mb-0">Back</button>
+  <span class="text-gray-700 text-center w-full sm:w-auto">Page {{ currentPage }} of {{ totalPages }}</span>
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 w-full sm:w-auto">Next</button>
 </div>

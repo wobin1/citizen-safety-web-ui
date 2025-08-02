@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-modal',
+  selector: 'app-alert-status-modal',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './modal.component.html',
-  styleUrl: './modal.component.scss'
+  templateUrl: './alert-status-modal.component.html',
+  styleUrl: './alert-status-modal.component.scss'
 })
-export class ModalComponent {
+export class AlertStatusModalComponent {
   @Input() type!: string;
   @Input() title: string = 'Confirmation';
   @Input() isVisible: boolean = false;

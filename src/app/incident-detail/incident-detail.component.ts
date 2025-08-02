@@ -22,6 +22,16 @@ export class IncidentDetailComponent {
   rejectionReason: string = '';
   isRejecting: boolean = false;
 
+  // Modal state for validation
+  showValidateModal: boolean = false;
+  isValidating: boolean = false;
+
+  // State for Trigger Alert dropdown and modal
+  showAlertDropdown: boolean = false;
+  showAlertModal: boolean = false;
+  isAlerting: boolean = false;
+  alertTarget: 'neighborhood' | 'citizens' | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -49,11 +59,37 @@ export class IncidentDetailComponent {
     });
   }
 
+  // Open the validation modal
   validateIncident(): void {
-    // Call service to update incident status to 'validated'
-    console.log('Validating incident:', this.incident.id);
-    this.incident.status = 'validated'; // Update UI immediately
-    // this.incidentService.updateIncidentStatus(this.incident.id, 'validated').subscribe(...);
+    this.showValidateModal = true;
+  }
+
+  // Close the validation modal
+  closeValidateModal(): void {
+    this.showValidateModal = false;
+  }
+
+  // Confirm validation
+  confirmValidate(): void {
+    if (!this.incident) return;
+    this.isValidating = true;
+    let payload: any = {
+      "status": "VALIDATED",
+      "rejection_reason": null
+    }
+    this.incidentService.validateIncident(this.incident.id, payload).subscribe({
+      next: () => {
+        alert('Incident validated successfully.');
+        this.incident.status = 'VALIDATED';
+        this.closeValidateModal();
+      },
+      error: (err: any) => {
+        alert('Failed to validate incident: ' + (err?.error?.message || 'Unknown error'));
+      },
+      complete: () => {
+        this.isValidating = false;
+      }
+    });
   }
 
   // Open the rejection modal
@@ -104,6 +140,35 @@ export class IncidentDetailComponent {
     console.log('Dispatching alert for incident:', this.incident.id);
     this.incident.status = 'dispatched'; // Update UI immediately
     // this.incidentService.dispatchAlert(this.incident.id).subscribe(...);
+  }
+
+  // Trigger Alert Dropdown
+  toggleAlertDropdown(): void {
+    this.showAlertDropdown = !this.showAlertDropdown;
+  }
+
+  openAlertConfirmation(target: 'neighborhood' | 'citizens'): void {
+    this.alertTarget = target;
+    this.showAlertModal = true;
+    this.showAlertDropdown = false;
+  }
+
+  closeAlertModal(): void {
+    this.showAlertModal = false;
+    this.alertTarget = null;
+  }
+
+  confirmAlertTrigger(): void {
+    if (!this.incident || !this.alertTarget) return;
+    this.isAlerting = true;
+    // Simulate API call or call your service here
+    setTimeout(() => {
+      alert(`Alert triggered for ${this.alertTarget === 'neighborhood' ? 'Neighborhood' : 'Citizens'}.`);
+      this.isAlerting = false;
+      this.closeAlertModal();
+    }, 1000);
+    // Example:
+    // this.incidentService.triggerAlert(this.incident.id, this.alertTarget).subscribe(...)
   }
 
   goBack(): void {

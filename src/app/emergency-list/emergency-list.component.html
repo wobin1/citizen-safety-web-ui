@@ -1,0 +1,75 @@
+<!-- emergency-list.component.html -->
+<h1 class="text-3xl font-bold mb-6 text-gray-800 text-center sm:text-left">All Emergencies</h1>
+
+<div class="mb-4 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+  <input [(ngModel)]="search" (ngModelChange)="onSearchChange($event)" type="text" placeholder="Search emergencies..." class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 w-full sm:w-auto">
+  <select [(ngModel)]="filter" (change)="filterEmergency(filter)" class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 w-full sm:w-auto">
+    <option value="">All Statuses</option>
+    <option value="PENDING">Pending</option>
+    <option value="VALIDATED">Validated</option>
+    <option value="REJECTED">Rejected</option>
+    <option value="ACTION_TAKEN">Action Taken</option>
+  </select>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reported At</th>
+        <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      <tr *ngFor="let emergency of emergencies.data.emergencies" class="hover:bg-gray-50">
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 break-words max-w-xs">{{ emergency.description }}</td>
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700 break-words max-w-xs">{{ emergency!.type }}</td>
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+          @if (emergency.location_lat || emergency.location_lon) {
+            {{ emergency!.location_lat }}, {{emergency!.location_lon}}
+          } @else {
+            <span class="text-gray-400 italic">No location</span>
+          }
+        </td>
+        <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+          <ng-container [ngSwitch]="emergency.status">
+            <span *ngSwitchCase="'PENDING'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+              {{ emergency.status | titlecase }}
+            </span>
+            <span *ngSwitchCase="'VALIDATED'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+              {{ emergency.status | titlecase }}
+            </span>
+            <span *ngSwitchCase="'ACTION_TAKEN'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+              {{ emergency.status | titlecase }}
+            </span>
+            <span *ngSwitchCase="'REJECTED'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+              {{ emergency.status | titlecase }}
+            </span>
+            <span *ngSwitchDefault class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+              {{ emergency.status | titlecase }}
+            </span>
+          </ng-container>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ emergency!.created_at | date:'short' }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <a (click)="route('emergency/' + emergency.id)" class="text-blue-600 hover:text-blue-900 mr-4">View</a>
+          <button *ngIf="emergency!.status === 'PENDING'" class="text-green-600 hover:text-green-900">Validate</button>
+        </td>
+      </tr>
+      <tr *ngIf="emergencies?.data?.length === 0">
+        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No emergencies found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination Controls -->
+<div class="flex items-center justify-between mt-4">
+  <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50">Back</button>
+  <span class="text-gray-700">Page {{ currentPage }} of {{ totalPages }}</span>
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50">Next</button>
+</div>

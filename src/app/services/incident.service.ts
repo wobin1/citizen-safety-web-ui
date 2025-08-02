@@ -27,9 +27,9 @@ export class IncidentService {
     return this.http.post<any>(`${this.apiUrl}/${id}/dispatch`, {});
   }
 
-  validateIncident(id: string, status: string = 'VALIDATED'): Observable<any> {
+  validateIncident(id: string, payload: any): Observable<any> {
     // The backend expects a POST to /incidents/{id}/validate with { status: 'VALIDATED' }
-    return this.http.post<any>(`${this.apiUrl}/${id}/validate`, { status });
+    return this.http.post<any>(`${this.apiUrl}/${id}/validate`, payload);
   }
 
   rejectIncident(id: string, rejection_reason: string): Observable<any> {
@@ -53,5 +53,8 @@ export class IncidentService {
     return this.http.get<any>(`${this.apiUrl}/stats/dashboard`);
   }
 
+  trigerAlert(payload: any): Observable<any>{
+    return this.http.post<any>(`${this.apiUrl}/trigger-alert`, payload);
+  }
 
 }

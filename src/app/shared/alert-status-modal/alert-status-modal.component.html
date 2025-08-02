@@ -35,20 +35,13 @@
         {{ cancelButtonText }}
       </button>
       <button
-        *ngIf="type == 'validate'"
         (click)="onConfirm()"
         class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-red-700 transition-colors duration-200"
       >
         {{ confirmButtonText }}
       </button>
 
-      <button
-      *ngIf="type == 'reject'"
-        (click)="onConfirm()"
-        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors duration-200"
-      >
-        {{ confirmButtonText }}
-      </button>
+
     </div>
   </div>
 </div>
