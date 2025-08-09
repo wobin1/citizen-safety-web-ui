@@ -25,8 +25,8 @@
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
-      <tr *ngFor="let emergency of emergencies.data.emergencies" class="hover:bg-gray-50">
-        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 break-words max-w-xs">{{ emergency.description }}</td>
+      <tr *ngFor="let emergency of emergencies?.data.emergencies" class="hover:bg-gray-50">
+        <td class="px-4 sm:px-6 py-4 text-sm font-medium text-gray-900 break-words max-w-xs">{{ emergency.description }}</td>
         <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700 break-words max-w-xs">{{ emergency!.type }}</td>
         <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
           @if (emergency.location_lat || emergency.location_lon) {
@@ -57,7 +57,6 @@
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ emergency!.created_at | date:'short' }}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
           <a (click)="route('emergency/' + emergency.id)" class="text-blue-600 hover:text-blue-900 mr-4">View</a>
-          <button *ngIf="emergency!.status === 'PENDING'" class="text-green-600 hover:text-green-900">Validate</button>
         </td>
       </tr>
       <tr *ngIf="emergencies?.data?.length === 0">

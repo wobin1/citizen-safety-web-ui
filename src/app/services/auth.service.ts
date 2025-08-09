@@ -117,7 +117,7 @@ export class AuthService {
     this._isLoggedIn.next(false);
 
     // Navigate to login page
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
     console.log('User logged out.');
   }
 

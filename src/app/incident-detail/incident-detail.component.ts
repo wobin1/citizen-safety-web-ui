@@ -7,10 +7,12 @@ import { MapComponent } from '../map/map.component';
 import { IncidentService } from '../services/incident.service';
 import { ModalComponent } from '../shared/modal/modal.component';
 import { FormsModule } from '@angular/forms';
+import { AlertStatusModalComponent } from '../shared/alert-status-modal/alert-status-modal.component';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-incident-detail',
-  imports: [CommonModule, MapComponent, ModalComponent, FormsModule],
+  imports: [CommonModule, MapComponent, ModalComponent, FormsModule, AlertStatusModalComponent],
   templateUrl: './incident-detail.component.html',
   styleUrl: './incident-detail.component.scss'
 })
@@ -35,10 +37,15 @@ export class IncidentDetailComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private incidentService: IncidentService // Inject your service here
+    private incidentService: IncidentService, // Inject your service here
+    private alertService: AlertService
   ) { }
 
   ngOnInit(): void {
+    this.getDetail()
+  }
+
+  getDetail(){
     this.route.paramMap.subscribe(params => {
       const incidentId = params.get('id');
       if (incidentId) {
@@ -82,6 +89,7 @@ export class IncidentDetailComponent {
         alert('Incident validated successfully.');
         this.incident.status = 'VALIDATED';
         this.closeValidateModal();
+        this.getDetail()
       },
       error: (err: any) => {
         alert('Failed to validate incident: ' + (err?.error?.message || 'Unknown error'));
@@ -117,6 +125,7 @@ export class IncidentDetailComponent {
         alert('Incident rejected successfully.');
         this.incident.status = 'REJECTED';
         this.closeRejectModal();
+        this.getDetail()
       },
       error: (err: any) => {
         alert('Failed to reject incident: ' + (err?.error?.message || 'Unknown error'));
@@ -161,14 +170,40 @@ export class IncidentDetailComponent {
   confirmAlertTrigger(): void {
     if (!this.incident || !this.alertTarget) return;
     this.isAlerting = true;
-    // Simulate API call or call your service here
-    setTimeout(() => {
-      alert(`Alert triggered for ${this.alertTarget === 'neighborhood' ? 'Neighborhood' : 'Citizens'}.`);
-      this.isAlerting = false;
-      this.closeAlertModal();
-    }, 1000);
-    // Example:
-    // this.incidentService.triggerAlert(this.incident.id, this.alertTarget).subscribe(...)
+    console.log("this is incident", this.incident)
+
+    let broadcastType;
+
+    if(this.alertTarget=='neighborhood'){
+      broadcastType= 'broadcast_neighborhood'
+    }else{
+      broadcastType = 'broadcast_all'
+    }
+
+    let alertPayload = {
+      "trigger_source": "emergency_service",
+      "type": "natural disaster",
+      "message": this.incident.description,
+      "location_lat": this.incident.location_lat,
+      "location_lon": this.incident.location_lon,
+      "radius_km": 5.0,
+      "broadcast_type": broadcastType
+    }
+
+    this.alertService.triggerAlert(alertPayload).subscribe(
+      res=>{
+        alert(`Alert triggered for ${this.alertTarget === 'neighborhood' ? 'Neighborhood' : 'Citizens'}.`);
+        this.isAlerting = false;
+        this.closeAlertModal();
+      },
+      err=>{
+        alert(err.error)
+        console.log(err.error)
+        this.isAlerting = false;
+        this.closeAlertModal()
+      }
+    )
+
   }
 
   goBack(): void {

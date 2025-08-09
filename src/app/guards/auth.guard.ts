@@ -1,27 +1,27 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service'; // Ensure this path is correct
+import { AuthService } from '../services/auth.service';
 import { map, take } from 'rxjs/operators';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // The guard subscribes to isLoggedIn$ to get the current authentication status.
-  // `take(1)` ensures it only takes the first value and then completes, preventing memory leaks.
+  console.log('[authGuard] Checking authentication for route:', state.url);
+
   return authService.isLoggedIn$.pipe(
     take(1),
-    map(isLoggedIn => {
+    map((isLoggedIn) => {
+      console.log('[authGuard] isLoggedIn value:', isLoggedIn);
       if (isLoggedIn) {
-        // If the user is logged in, allow access to the route
+        console.log('[authGuard] User is authenticated, allowing access.');
         return true;
-      } else {
-        // If the user is not logged in, redirect them to the login page
-        // and prevent access to the requested route.
-        console.log('user not authenticated')
-        router.navigate(['auth/login']);
-        return false;
       }
+      console.log('[authGuard] User is NOT authenticated, redirecting to /auth/login');
+      // Return a UrlTree instead of navigating imperatively
+      return router.createUrlTree(['/auth/login'], {
+        queryParams: { redirect: state.url }
+      });
     })
   );
 };

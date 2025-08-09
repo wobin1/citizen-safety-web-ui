@@ -1,6 +1,10 @@
 <div class="flex h-screen bg-gray-100">
-  <aside class="w-64 bg-gray-800 text-white p-4 shadow-lg">
-    <div class="text-xl font-bold mb-6 text-center">EMS Dashboard</div>
+  <aside class="w-64 bg-gray-800 text-white flex flex-col justify-between p-4 shadow-lg">
+    <span>
+      <div class="flex items-center justify-between mb-6">
+      <div class="text-xl font-bold">EMS Dashboard</div>
+
+    </div>
     <nav>
       <ul class="space-y-2">
         <li>
@@ -65,6 +69,15 @@
         </li>
       </ul>
     </nav>
+    </span>
+
+    <button
+        (click)="logout()"
+        class="text-sm bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded"
+        aria-label="Logout"
+      >
+        Logout
+      </button>
   </aside>
 
   <main class="flex-1 overflow-auto p-6">

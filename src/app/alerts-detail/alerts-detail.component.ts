@@ -42,6 +42,10 @@ export class AlertsDetailComponent {
   ) { }
 
   ngOnInit(): void {
+    this.getAlertDetail()
+  }
+
+  getAlertDetail(){
     this.route.paramMap.subscribe(params => {
       const alertId = params.get('id');
       if (alertId) {
@@ -103,6 +107,11 @@ export class AlertsDetailComponent {
         next: () => {
           this.isAlerting = false;
           this.closeAlertModal();
+          this.getAlertDetail();
+        },
+        error: (err: any) => {
+          this.isAlerting = false;
+          alert('Failed to resolve alert: ' + (err?.error?.message || 'Unknown error'));
         }
       });
     } else if (this.alertTarget === 'cooldown') {
@@ -111,6 +120,10 @@ export class AlertsDetailComponent {
         next: () => {
           this.isAlerting = false;
           this.closeAlertModal();
+        },
+        error: (err: any) => {
+          this.isAlerting = false;
+          alert('Failed to cooldown alert: ' + (err?.error?.message || 'Unknown error'));
         }
       });
     }

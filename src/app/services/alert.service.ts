@@ -93,6 +93,6 @@ export class AlertService {
    * @returns An Observable of the newly triggered alert.
    */
   triggerAlert(payload: any): Observable<any>{
-    return this.http.post<any>(`${this.apiUrl}/trigger-alert`, payload);
+    return this.http.post<any>(`${this.apiUrl}/trigger`, payload);
   }
 }

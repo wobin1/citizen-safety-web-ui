@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { Observable } from 'rxjs';
+import type { User } from '../services/auth.service';
 
 @Component({
   selector: 'app-main',
@@ -11,11 +14,11 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 })
 export class MainComponent {
 
-  constructor(private router:Router){}
+  currentUser$: Observable<User | null>;
 
-
-  // No, this function is not correct.
-  // 1. The correct Angular lifecycle hook is ngOnInit, not ngOnit.
+  constructor(private router: Router, private authService: AuthService) {
+    this.currentUser$ = this.authService.currentUser$;
+  }
   // 2. To use ngOnInit, you should implement the OnInit interface.
   // Here is the corrected version:
 
@@ -37,5 +40,9 @@ export class MainComponent {
     const url = (this.router as any).urlAfterRedirects || this.router.url;
 
     return url.split('?')[0];
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }
