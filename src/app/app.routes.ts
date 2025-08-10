@@ -11,6 +11,7 @@ import { AlertListComponent } from './alerts-list/alerts-list.component';
 import { AlertsDetailComponent } from './alerts-detail/alerts-detail.component';
 import { EmergencyListComponent } from './emergency-list/emergency-list.component';
 import { EmergencyDetailComponent } from './emergency-detail/emergency-detail.component';
+import { MapViewComponent } from './map-view/map-view.component';
 
 export const routes: Routes = [
   { path: 'auth', component: AuthComponent, children: [
@@ -24,7 +25,7 @@ export const routes: Routes = [
     { path: 'alerts/:id', component: AlertsDetailComponent , canActivate: [authGuard] },
     { path: 'emergency', component: EmergencyListComponent , canActivate: [authGuard] },
     { path: 'emergency/:id', component: EmergencyDetailComponent , canActivate: [authGuard] },
-    { path: 'maps', component: MapComponent , canActivate: [authGuard] },
+    { path: 'maps', component: MapViewComponent , canActivate: [authGuard] },
   ]},
   { path: '', redirectTo: 'app/dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'app/dashboard' } // Wildcard for unmatched routes

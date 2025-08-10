@@ -101,6 +101,7 @@ export class AuthService {
         console.error('Login failed in AuthService:', error);
         // Clear any stored data on failed login attempt
         this.logout();
+        this._isLoggedIn.next(false);
         return throwError(() => new Error(error.error?.message || 'Login failed'));
       })
     );

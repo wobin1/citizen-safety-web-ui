@@ -24,13 +24,45 @@
     </div>
 
     <div>
-      <h2 class="text-xl font-semibold mb-2 text-gray-700">Attachments (Photos/Videos)</h2>
-      <div class="grid grid-cols-2 gap-4">
-        <div *ngFor="let photo of emergency!.photos">
-          <img [src]="photo" alt="Emergency Photo" class="w-full h-32 object-cover rounded-md shadow-sm">
+      <h2 class="text-xl font-semibold mb-2 text-gray-700">Attachments</h2>
+      <!-- Responsive thumbnails: stack on small screens, row on md+ -->
+      <div class="flex flex-col sm:flex-row items-start sm:space-x-4 space-y-4 sm:space-y-0">
+        <!-- Image thumb -->
+        <div class="w-24 h-16 sm:w-28 sm:h-20" *ngIf="emergency?.image_url; else noImage">
+          <button (click)="openMedia('image', emergency!.image_url)" class="block w-full h-full overflow-hidden rounded shadow">
+            <img [src]="emergency!.image_url" alt="Image" class="w-full h-full object-cover" />
+          </button>
+          <p class="text-xs text-gray-500 mt-1 truncate" title="Image">Image</p>
         </div>
-        <p *ngIf="!emergency!.photos || emergency!.photos.length === 0" class="text-gray-500">No attachments.</p>
+        <ng-template #noImage>
+          <p class="text-gray-500 text-sm">No image.</p>
+        </ng-template>
+
+        <!-- Video thumb -->
+        <div class="w-24 h-16 sm:w-28 sm:h-20" *ngIf="emergency?.video_url; else noVideo">
+          <button (click)="openMedia('video', emergency!.video_url)" class="block w-full h-full bg-black rounded shadow relative">
+            <span class="absolute inset-0 grid place-items-center text-white text-2xl sm:text-3xl">▶</span>
+          </button>
+          <p class="text-xs text-gray-500 mt-1 truncate" title="Video">Video</p>
+        </div>
+        <ng-template #noVideo>
+          <p class="text-gray-500 text-sm">No video.</p>
+        </ng-template>
+
+        <!-- Audio thumb -->
+        <div class="w-24 h-16 sm:w-28 sm:h-20" *ngIf="emergency?.voice_note_url; else noAudio">
+          <button (click)="openMedia('audio', emergency!.voice_note_url)" class="block w-full h-full bg-gray-200 rounded shadow relative">
+            <span class="absolute inset-0 grid place-items-center text-gray-700 text-sm sm:text-base">Audio</span>
+          </button>
+          <p class="text-xs text-gray-500 mt-1 truncate" title="Voice Note">Voice</p>
+        </div>
+        <ng-template #noAudio>
+          <p class="text-gray-500 text-sm">No audio.</p>
+        </ng-template>
       </div>
+
+      <!-- If none exist, show a combined message -->
+      <p *ngIf="!emergency?.image_url && !emergency?.video_url && !emergency?.voice_note_url" class="text-gray-500 mt-2">No attachments provided.</p>
     </div>
 
     <div class="col-span-full w-full">
@@ -109,4 +141,24 @@
 >
   <p class="text-gray-700 mb-4">Are you sure you want to mark this emergency as 'Action Taken'?</p>
   <p class="text-sm text-gray-500">This indicates that necessary actions have been completed for this emergency.</p>
+</app-modal>
+
+<!-- Media Preview Modal -->
+<app-modal
+  [isVisible]="showMediaModal"
+  type="preview"
+  [title]="(selectedMediaType || '').toUpperCase()"
+  [confirmButtonText]="'Close'"
+  [cancelButtonText]="''"
+  (close)="closeMediaModal()"
+  (confirm)="closeMediaModal()"
+>
+  <div class="w-full">
+    <ng-container [ngSwitch]="selectedMediaType">
+      <img *ngSwitchCase="'image'" [src]="selectedMediaUrl" alt="Preview" class="w-full max-h-[70vh] object-contain rounded" />
+      <video *ngSwitchCase="'video'" [src]="selectedMediaUrl" controls class="w-full rounded" style="max-height:70vh;"></video>
+      <audio *ngSwitchCase="'audio'" [src]="selectedMediaUrl" controls class="w-full"></audio>
+      <p *ngSwitchDefault class="text-gray-500">No media selected.</p>
+    </ng-container>
+  </div>
 </app-modal>

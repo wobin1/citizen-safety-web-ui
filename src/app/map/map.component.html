@@ -9,7 +9,7 @@
   <map-marker
     *ngFor="let incident of incidents"
     [position]="{lat: incident.location_lat, lng: incident!.location_lon}"
-    [options]="{ icon: getMarkerIcon(incident.status), title: incident.type + ' - ' + incident.location }"
+    [options]="{ icon: getMarkerIcon(incident.status), title: incident.type + ' - ' + incident.description }"
     (mapClick)="markerClick($event, incident)"
   >
     <map-info-window>
