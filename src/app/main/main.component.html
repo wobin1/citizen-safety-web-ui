@@ -2,73 +2,73 @@
   <aside class="w-64 bg-gray-800 text-white flex flex-col justify-between p-4 shadow-lg">
     <span>
       <div class="flex items-center justify-between mb-6">
-      <div class="text-xl font-bold">EMS Dashboard</div>
+        <div class="text-xl font-bold">EMS Dashboard</div>
 
-    </div>
-    <nav>
-      <ul class="space-y-2">
-        <li>
-          <a
-            (click)="route('/dashboard')"
-            [ngClass]="{
-              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-              'bg-gray-900 text-white': getCurrentRoute() === '/app/dashboard',
-              'hover:bg-gray-700': getCurrentRoute() !== '/app/dashboard'
-            }"
-          >
-            <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
-          </a>
-        </li>
-        <li>
-          <a
-            (click)="route('/incidents')"
-            [ngClass]="{
-              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-              'bg-gray-900 text-white': getCurrentRoute() === '/app/incidents',
-              'hover:bg-gray-700': getCurrentRoute() !== '/app/incidents'
-            }"
-          >
-            <i class="fas fa-exclamation-triangle mr-2"></i> All Incidents
-          </a>
-        </li>
-        <li>
-          <a
-            (click)="route('/alerts')"
-            [ngClass]="{
-              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-              'bg-gray-900 text-white': getCurrentRoute() === '/app/alerts',
-              'hover:bg-gray-700': getCurrentRoute() !== '/app/alerts'
-            }"
-          >
-            <i class="fas fa-bell mr-2"></i> Alerts
-          </a>
-        </li>
-        <li>
-          <a
-            (click)="route('/emergency')"
-            [ngClass]="{
-              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-              'bg-gray-900 text-white': getCurrentRoute() === '/app/emergency',
-              'hover:bg-gray-700': getCurrentRoute() !== '/app/emergency'
-            }"
-          >
-            <i class="fas fa-ambulance mr-2"></i> Emergency
-          </a>
-        </li>
-        <li>
-          <a
-            (click)="route('/maps')"
-            [ngClass]="{
-              'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-              'bg-gray-900 text-white': getCurrentRoute() === '/app/maps',
-              'hover:bg-gray-700': getCurrentRoute() !== '/app/maps'
-            }"
-          >
-            <i class="fas fa-map-marked-alt mr-2"></i> Map View
-          </a>
-        </li>
-      </ul>
-    </nav>
+      </div>
+      <nav>
+        <ul class="space-y-2">
+          <li>
+            <a
+              (click)="route('/dashboard')"
+              [ngClass]="{
+                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+                'bg-gray-900 text-white': getCurrentRoute() === '/app/dashboard',
+                'hover:bg-gray-700': getCurrentRoute() !== '/app/dashboard'
+              }"
+            >
+              <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="route('/incidents')"
+              [ngClass]="{
+                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+                'bg-gray-900 text-white': getCurrentRoute() === '/app/incidents',
+                'hover:bg-gray-700': getCurrentRoute() !== '/app/incidents'
+              }"
+            >
+              <i class="fas fa-exclamation-triangle mr-2"></i> All Incidents
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="route('/alerts')"
+              [ngClass]="{
+                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+                'bg-gray-900 text-white': getCurrentRoute() === '/app/alerts',
+                'hover:bg-gray-700': getCurrentRoute() !== '/app/alerts'
+              }"
+            >
+              <i class="fas fa-bell mr-2"></i> Alerts
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="route('/emergency')"
+              [ngClass]="{
+                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+                'bg-gray-900 text-white': getCurrentRoute() === '/app/emergency',
+                'hover:bg-gray-700': getCurrentRoute() !== '/app/emergency'
+              }"
+            >
+              <i class="fas fa-ambulance mr-2"></i> Emergency
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="route('/maps')"
+              [ngClass]="{
+                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
+                'bg-gray-900 text-white': getCurrentRoute() === '/app/maps',
+                'hover:bg-gray-700': getCurrentRoute() !== '/app/maps'
+              }"
+            >
+              <i class="fas fa-map-marked-alt mr-2"></i> Map View
+            </a>
+          </li>
+        </ul>
+      </nav>
     </span>
 
     <button
@@ -81,6 +81,34 @@
   </aside>
 
   <main class="flex-1 overflow-auto p-6">
+    <!-- Notification Icon with Count -->
+    <div class="relative flex justify-end w-full mb-4">
+      <button
+        (click)="showNotifications()"
+        class="focus:outline-none relative p-2 hover:bg-gray-200 rounded-full transition-colors"
+        aria-label="Notifications"
+      >
+        <i class="fas fa-bell text-2xl text-gray-700"></i>
+        <span
+          *ngIf="(unreadCount$ | async) as count; else noCount"
+          class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]"
+        >
+          {{ count > 99 ? '99+' : count }}
+        </span>
+        <ng-template #noCount></ng-template>
+
+        <!-- Test button for debugging -->
+        <!-- <button
+          (click)="showNotifications()"
+          class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded"
+        >
+          Test Modal
+        </button> -->
+      </button>
+    </div>
     <router-outlet></router-outlet>
   </main>
+
+  <!-- Notification Modal -->
+  <app-notification-modal #notificationModal></app-notification-modal>
 </div>

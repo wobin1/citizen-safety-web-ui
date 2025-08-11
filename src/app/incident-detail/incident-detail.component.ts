@@ -34,6 +34,11 @@ export class IncidentDetailComponent {
   isAlerting: boolean = false;
   alertTarget: 'neighborhood' | 'citizens' | null = null;
 
+  // Media preview modal state
+  showMediaModal: boolean = false;
+  selectedMediaType: 'image' | 'video' | 'audio' | null = null;
+  selectedMediaUrl: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -208,6 +213,20 @@ export class IncidentDetailComponent {
 
   goBack(): void {
     this.router.navigate(['/incidents']);
+  }
+
+  // Media preview helpers
+  openMedia(type: 'image' | 'video' | 'audio', url: string): void {
+    if (!url) return;
+    this.selectedMediaType = type;
+    this.selectedMediaUrl = url;
+    this.showMediaModal = true;
+  }
+
+  closeMediaModal(): void {
+    this.showMediaModal = false;
+    this.selectedMediaType = null;
+    this.selectedMediaUrl = '';
   }
 
 }

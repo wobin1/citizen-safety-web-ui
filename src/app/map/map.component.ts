@@ -89,10 +89,41 @@ export class MapComponent {
           url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
           scaledSize: new google.maps.Size(32, 32)
         };
+      case 'active':
+        return {
+          url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+          scaledSize: new google.maps.Size(32, 32)
+        };
       case 'rejected':
       case 'false':
         return {
           url: 'http://maps.google.com/mapfiles/ms/icons/grey-dot.png',
+          scaledSize: new google.maps.Size(32, 32)
+        };
+      default:
+        return {
+          url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+          scaledSize: new google.maps.Size(32, 32)
+        };
+    }
+  }
+
+  // Method to return a marker icon based on incident type
+  getTypeIcon(type: string): google.maps.Icon | google.maps.Symbol | string {
+    switch (type.toLowerCase()) {
+      case 'emergency':
+        return {
+          url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+          scaledSize: new google.maps.Size(32, 32)
+        };
+      case 'alert':
+        return {
+          url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+          scaledSize: new google.maps.Size(32, 32)
+        };
+      case 'incident':
+        return {
+          url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
           scaledSize: new google.maps.Size(32, 32)
         };
       default:
