@@ -1,9 +1,10 @@
+// dashboard.component.ts
 import { Component } from '@angular/core';
 import { IncidentService } from '../services/incident.service';
-import { CommonModule, DatePipe, SlicePipe, TitleCasePipe } from '@angular/common'; // Add TitleCasePipe
+import { CommonModule, DatePipe, SlicePipe, TitleCasePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { ModalComponent } from '../shared/modal/modal.component'; // Import ModalComponent
-import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
+import { ModalComponent } from '../shared/modal/modal.component';
+import { FormsModule } from '@angular/forms';
 
 // Define a basic interface for your incident, matching what you get from API
 interface Incident {
@@ -13,7 +14,7 @@ interface Incident {
   location_lat?: number;
   location_lon?: number;
   status: string;
-  created_at: string; // Assuming it's a string from API
+  created_at: string;
 }
 
 // Define a basic interface for your stats response
@@ -32,13 +33,14 @@ interface IncidentStats {
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
-  stats: IncidentStats | null = null; // Use the IncidentStats interface
+  stats: IncidentStats | null = null;
+  isLoading: boolean = false; // Added isLoading state
 
   // State for the rejection modal
   showRejectModal: boolean = false;
   incidentToReject: Incident | null = null;
   rejectionReason: string = '';
-  isRejecting: boolean = false; // To show loading state on reject button
+  isRejecting: boolean = false;
 
   constructor(private incidentService: IncidentService, private router:Router) {}
 
@@ -48,39 +50,39 @@ export class DashboardComponent {
 
 
   getIncidentStats() {
+    this.isLoading = true; // Set isLoading to true at the start of the request
     this.incidentService.getIncidentStats().subscribe({
-      next: (data: any) => { // Assuming data.data holds the IncidentStats object
+      next: (data: any) => {
         this.stats = data.data;
         console.log("stats data", this.stats);
+        this.isLoading = false; // Set isLoading to false on success
       },
       error: (err: any) => {
         console.error('Failed to fetch incident stats:', err);
         this.stats = null;
+        this.isLoading = false; // Set isLoading to false on error
       }
     });
   }
 
-  route(id: string) { // Ensure id is string
+  route(id: string) {
     console.log('routing to ')
-    this.router.navigate(["app/incidents/" + id]); // Corrected path to match app.routes.ts
+    this.router.navigate(["app/incidents/" + id]);
   }
 
-  // Method to open the rejection modal
   openRejectModal(incident: Incident) {
     console.log("opening rejection modal")
     this.incidentToReject = incident;
-    this.rejectionReason = ''; // Clear previous reason
+    this.rejectionReason = '';
     this.showRejectModal = true;
   }
 
-  // Method to close the rejection modal
   closeRejectModal() {
     this.showRejectModal = false;
     this.incidentToReject = null;
     this.rejectionReason = '';
   }
 
-  // Method called when the modal's confirm button is clicked
   confirmReject(reason: string) {
     if (!this.incidentToReject) {
       alert('No incident selected for rejection.');
@@ -93,19 +95,19 @@ export class DashboardComponent {
       return;
     }
 
-    this.isRejecting = true; // Start loading
+    this.isRejecting = true;
     this.incidentService.rejectIncident(this.incidentToReject.id, reason).subscribe({
       next: (res: any) => {
         alert('Incident rejected successfully.');
-        this.getIncidentStats(); // Refresh the stats and list
-        this.closeRejectModal(); // Close the modal
+        this.getIncidentStats();
+        this.closeRejectModal();
       },
       error: (err: any) => {
         console.error('Failed to reject incident:', err);
         alert('Failed to reject incident: ' + (err?.error?.message || 'Unknown error'));
       },
       complete: () => {
-        this.isRejecting = false; // End loading
+        this.isRejecting = false;
       }
     });
   }

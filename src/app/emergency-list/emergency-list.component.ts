@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterModule } from '@angular/router';
-import { EmergencyService } from '../services/emergency.service'; // Make sure to create this service
+import { EmergencyService } from '../services/emergency.service';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -16,19 +16,19 @@ import { debounceTime } from 'rxjs/operators';
   styleUrl: './emergency-list.component.scss'
 })
 export class EmergencyListComponent {
-  emergencies:any = [];
-  search:any = "";
-  filter:any = "";
+  emergencies: any = [];
+  search: any = "";
+  filter: any = "";
 
   currentPage: number = 1;
   totalPages: number = 1;
   pageSize: number = 10;
   total: number = 0;
+  isLoading: boolean = false; // Added isLoading state
 
   private searchSubject = new Subject<string>();
 
-  // Inject the new EmergencyService
-  constructor(private emergencyService: EmergencyService, private router:Router) {
+  constructor(private emergencyService: EmergencyService, private router: Router) {
     this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
       this.performSearch(searchTerm);
     });
@@ -46,12 +46,13 @@ export class EmergencyListComponent {
     this.getEmergencies({ search: searchTerm, status: this.filter, page: this.currentPage, page_size: this.pageSize });
   }
 
-  route(page:string){
-    console.log(page)
-    this.router.navigate(["app/"+page])
+  route(page: string) {
+    console.log(page);
+    this.router.navigate(["app/" + page]);
   }
 
   getEmergencies(params?: any) {
+    this.isLoading = true; // Set isLoading to true at the start of the request
     params = params || {};
     params.page = params.page || this.currentPage;
     params.page_size = params.page_size || this.pageSize;
@@ -64,10 +65,12 @@ export class EmergencyListComponent {
         this.pageSize = data.data.page_size || 10;
         this.total = data.data.total || 0;
         this.totalPages = Math.ceil(this.total / this.pageSize) || 1;
+        this.isLoading = false; // Set isLoading to false on success
       },
       error: (err: any) => {
         console.error('Failed to fetch emergencies:', err);
         this.emergencies = [];
+        this.isLoading = false; // Set isLoading to false on error
       }
     });
   }
@@ -90,9 +93,8 @@ export class EmergencyListComponent {
     }
   }
 
-  filterEmergency(filter:string){
+  filterEmergency(filter: string) {
     this.currentPage = 1;
     this.getEmergencies({ status: filter, search: this.search, page: this.currentPage, page_size: this.pageSize });
   }
-
 }

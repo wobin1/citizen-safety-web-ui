@@ -1,112 +1,119 @@
 <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Overview</h1>
 
-<div class="overflow-x-auto mb-8 hide-scrollbar">
-  <div class="flex space-x-6 pb-2">
-    <div class="min-w-[280px] bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col items-start justify-between space-y-4">
-      <div class="flex items-center text-gray-400">
-        <h2 class="text-lg font-medium text-gray-700">Pending Incidents</h2>
-        <span class="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
-      </div>
-      <div class="flex items-end justify-between w-full">
-        <p class="text-4xl font-bold text-gray-900 mt-2">{{ stats?.pending }}</p>
-        <i class="fas fa-hourglass-half text-4xl text-gray-300"></i>
-      </div>
-    </div>
-
-    <div class="min-w-[280px] bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col items-start justify-between space-y-4">
-      <div class="flex items-center text-gray-400">
-        <h2 class="text-lg font-medium text-gray-700">Dispatched Alerts</h2>
-        <span class="ml-2 w-2 h-2 bg-orange-500 rounded-full"></span>
-      </div>
-      <div class="flex items-end justify-between w-full">
-        <p class="text-4xl font-bold text-gray-900 mt-2">5</p>
-        <i class="fas fa-paper-plane text-4xl text-gray-300"></i>
-      </div>
-    </div>
-
-    <div class="min-w-[280px] bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col items-start justify-between space-y-4">
-      <div class="flex items-center text-gray-400">
-        <h2 class="text-lg font-medium text-gray-700">Validated Reports</h2>
-        <span class="ml-2 w-2 h-2 bg-purple-500 rounded-full"></span>
-      </div>
-      <div class="flex items-end justify-between w-full">
-        <p class="text-4xl font-bold text-gray-900 mt-2">{{ stats?.validated }}</p>
-        <i class="fas fa-check-circle text-4xl text-gray-300"></i>
-      </div>
-    </div>
-
-    <div class="min-w-[280px] bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col items-start justify-between space-y-4">
-      <div class="flex items-center text-gray-400">
-        <h2 class="text-lg font-medium text-gray-700">Rejected Reports</h2>
-        <span class="ml-2 w-2 h-2 bg-red-500 rounded-full"></span>
-      </div>
-      <div class="flex items-end justify-between w-full">
-        <p class="text-4xl font-bold text-gray-900 mt-2">{{ stats?.rejected }}</p>
-        <i class="fas fa-times-circle text-4xl text-gray-300"></i>
-      </div>
-    </div>
+<div *ngIf="isLoading" class="fixed inset-0 bg-white bg-opacity-80 z-50 flex items-center justify-center">
+  <div class="flex flex-col items-center">
+    <svg class="animate-spin h-10 w-10 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <span class="mt-4 text-sm font-medium text-gray-500">Loading dashboard data...</span>
   </div>
 </div>
 
-<div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-  <div class="flex justify-between items-center mb-4">
-    <h2 class="text-xl font-semibold text-gray-800">Recent Pending Incidents</h2>
+<div *ngIf="!isLoading">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+    <div class="bg-gradient-to-br from-blue-400 to-blue-600 text-white p-6 rounded-2xl shadow-lg border border-blue-500 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Pending Incidents</h2>
+        <i class="fas fa-hourglass-half text-3xl opacity-75"></i>
+      </div>
+      <div class="mt-4">
+        <p class="text-5xl font-bold">{{ stats?.pending }}</p>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-br from-orange-400 to-orange-600 text-white p-6 rounded-2xl shadow-lg border border-orange-500 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Dispatched Alerts</h2>
+        <i class="fas fa-paper-plane text-3xl opacity-75"></i>
+      </div>
+      <div class="mt-4">
+        <p class="text-5xl font-bold">5</p>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-br from-green-400 to-green-600 text-white p-6 rounded-2xl shadow-lg border border-green-500 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Validated Reports</h2>
+        <i class="fas fa-check-circle text-3xl opacity-75"></i>
+      </div>
+      <div class="mt-4">
+        <p class="text-5xl font-bold">{{ stats?.validated }}</p>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-br from-red-400 to-red-600 text-white p-6 rounded-2xl shadow-lg border border-red-500 flex flex-col justify-between transform transition-transform duration-300 hover:scale-105">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Rejected Reports</h2>
+        <i class="fas fa-times-circle text-3xl opacity-75"></i>
+      </div>
+      <div class="mt-4">
+        <p class="text-5xl font-bold">{{ stats?.rejected }}</p>
+      </div>
+    </div>
   </div>
 
-  <div class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 py-2 px-4 text-sm font-semibold text-gray-500 border-b border-gray-200">
-    <span>TYPE</span>
-    <span class="hidden md:block">DESCRIPTION</span>
-    <span>STATUS</span>
-    <span class="hidden lg:block">CREATED AT</span>
-    <span class="hidden lg:block">ACTIONS</span>
-  </div>
+  <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">Recent Pending Incidents</h2>
+    </div>
 
-  <ul class="divide-y divide-gray-200">
-    <li *ngFor="let incident of stats?.latest_pending" class="py-4 px-4 hover:bg-gray-50 transition-colors duration-150">
-      <div class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 items-center gap-4 text-sm">
-        <span class="text-gray-900 font-medium">
-          {{ incident!.type }}
-        </span>
-        <span class="text-gray-600 hidden md:block">
-          {{ incident.description | slice:0:30 }}{{ incident.description!.length > 30 ? '...' : '' }}
-        </span>
-        <span>
-          <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Pending</span>
-        </span>
-        <span class="text-gray-600 hidden lg:block">
-          {{ incident.created_at | date:'medium' }}
-        </span>
-        <div class="flex space-x-2">
-          <button (click)="route(incident.id)" class="bg-blue-500 hover:bg-blue-600 text-white text-xs py-1 px-3 rounded-full transition-colors duration-200">Review</button>
-          <button
-            (click)="openRejectModal(incident)"
-            class="bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-3 rounded-full transition-colors duration-200"
-            [disabled]="isRejecting"
-          >
-            <span *ngIf="!isRejecting">Reject</span>
-            <span *ngIf="isRejecting" class="flex items-center">
-              <svg class="animate-spin h-3 w-3 mr-1 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Rejecting...
-            </span>
-          </button>
+    <div class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 py-2 px-4 text-sm font-semibold text-gray-500 border-b border-gray-200">
+      <span>TYPE</span>
+      <span class="hidden md:block">DESCRIPTION</span>
+      <span>STATUS</span>
+      <span class="hidden lg:block">CREATED AT</span>
+      <span class="hidden lg:block">ACTIONS</span>
+    </div>
+
+    <ul class="divide-y divide-gray-200">
+      <li *ngFor="let incident of stats?.latest_pending" class="py-4 px-4 hover:bg-gray-50 transition-colors duration-150">
+        <div class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 items-center gap-4 text-sm">
+          <span class="text-gray-900 font-medium">
+            {{ incident!.type }}
+          </span>
+          <span class="text-gray-600 hidden md:block">
+            {{ incident.description | slice:0:30 }}{{ incident.description!.length > 30 ? '...' : '' }}
+          </span>
+          <span>
+            <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Pending</span>
+          </span>
+          <span class="text-gray-600 hidden lg:block">
+            {{ incident.created_at | date:'medium' }}
+          </span>
+          <div class="flex space-x-2">
+            <button (click)="route(incident.id)" class="bg-blue-500 hover:bg-blue-600 text-white text-xs py-1 px-3 rounded-full transition-colors duration-200">Review</button>
+            <button
+              (click)="openRejectModal(incident)"
+              class="bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-3 rounded-full transition-colors duration-200"
+              [disabled]="isRejecting"
+            >
+              <span *ngIf="!isRejecting">Reject</span>
+              <span *ngIf="isRejecting" class="flex items-center">
+                <svg class="animate-spin h-3 w-3 mr-1 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Rejecting...
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
-    </li>
-    <li *ngIf="!stats?.latest_pending?.length" class="text-gray-500 text-center py-4">No recent pending incidents.</li>
-  </ul>
-</div>
+      </li>
+      <li *ngIf="!stats?.latest_pending?.length" class="text-gray-500 text-center py-4">No recent pending incidents.</li>
+    </ul>
+  </div>
 
-<app-modal
-  [isVisible]="showRejectModal"
-  [title]="'Reject Report: ' + (incidentToReject?.id || '')"
-  [confirmButtonText]="isRejecting ? 'Rejecting...' : 'Confirm Rejection'"
-  [cancelButtonText]="'Cancel'"
-  (close)="closeRejectModal()"
-  (confirm)="confirmReject($event)"
->
-  <p class="text-gray-700 mb-4">Are you sure you want to reject this report?</p>
-  <p class="text-sm text-gray-500">This action cannot be undone.</p>
-</app-modal>
+  <app-modal
+    [isVisible]="showRejectModal"
+    [title]="'Reject Report: ' + (incidentToReject?.id || '')"
+    [confirmButtonText]="isRejecting ? 'Rejecting...' : 'Confirm Rejection'"
+    [cancelButtonText]="'Cancel'"
+    (close)="closeRejectModal()"
+    (confirm)="confirmReject($event)"
+  >
+    <p class="text-gray-700 mb-4">Are you sure you want to reject this report?</p>
+    <p class="text-sm text-gray-500">This action cannot be undone.</p>
+  </app-modal>
+</div>

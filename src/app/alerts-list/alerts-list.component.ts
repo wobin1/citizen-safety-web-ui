@@ -14,9 +14,10 @@ import { debounceTime } from 'rxjs/operators';
   styleUrl: './alerts-list.component.scss'
 })
 export class AlertListComponent {
-  alerts:any = [];
-  search:any = "";
-  filter:any = "";
+  alerts: any = [];
+  search: any = "";
+  filter: any = "";
+  isLoading: boolean = false; // Added isLoading state
 
   currentPage: number = 1;
   totalPages: number = 1;
@@ -26,7 +27,7 @@ export class AlertListComponent {
   private searchSubject = new Subject<string>();
 
   // Inject the new AlertService
-  constructor(private alertService: AlertService, private router:Router) {
+  constructor(private alertService: AlertService, private router: Router) {
     this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
       this.performSearch(searchTerm);
     });
@@ -44,12 +45,13 @@ export class AlertListComponent {
     this.getAlerts({ search: searchTerm, status: this.filter, page: this.currentPage, page_size: this.pageSize });
   }
 
-  route(page:string){
-    console.log(page)
-    this.router.navigate(["app/"+page])
+  route(page: string) {
+    console.log(page);
+    this.router.navigate(["app/" + page]);
   }
 
   getAlerts(params?: any) {
+    this.isLoading = true; // Set isLoading to true at the start of the request
     params = params || {};
     params.page = params.page || this.currentPage;
     params.page_size = params.page_size || this.pageSize;
@@ -57,16 +59,18 @@ export class AlertListComponent {
     params.status = params.status !== undefined ? params.status : this.filter;
     this.alertService.getAlerts(params).subscribe({
       next: (data: any) => {
-        console.log(data)
+        console.log(data);
         this.alerts = data;
         this.currentPage = data.data.page || 1;
         this.pageSize = data.data.page_size || 10;
         this.total = data.data.total || 0;
         this.totalPages = Math.ceil(this.total / this.pageSize) || 1;
+        this.isLoading = false; // Set isLoading to false on success
       },
       error: (err: any) => {
         console.error('Failed to fetch alerts:', err);
         this.alerts = [];
+        this.isLoading = false; // Set isLoading to false on error
       }
     });
   }
