@@ -1,7 +1,9 @@
+// map-view.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MapComponent, Incident } from '../map/map.component';
 import { MapService, MapLocation } from '../services/map.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-map-view',
@@ -12,18 +14,19 @@ import { MapService, MapLocation } from '../services/map.service';
 })
 export class MapViewComponent implements OnInit {
   markers: Incident[] = [];
+  isLoading: boolean = true; // Add isLoading state
 
   constructor(private mapService: MapService) {}
 
   ngOnInit(): void {
     console.log("currently in the map view ")
-    this.getMapLocations()
-
+    this.getMapLocations();
   }
 
   getMapLocations() {
     this.mapService.getMapLocations().subscribe(res => {
       console.log('API Response:', res);
+      this.isLoading = false; // Set loading to false once the API responds
 
       if (res && res.data && Array.isArray(res.data)) {
         const mapped: Incident[] = res.data.map((loc: any) => ({
@@ -35,19 +38,14 @@ export class MapViewComponent implements OnInit {
           status: 'active',
           reportedAt: new Date(),
           photos: [],
-
           message: ""
         }));
         this.markers = mapped;
-
-        console.log('markers data', this.markers)
+        console.log('markers data', this.markers);
       } else {
         this.markers = [];
-        console.log('markers data', this.markers)
-
+        console.log('markers data', this.markers);
       }
     });
   }
-
-
 }

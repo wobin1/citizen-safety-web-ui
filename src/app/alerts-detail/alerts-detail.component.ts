@@ -1,6 +1,6 @@
 // alert-detail.component.ts
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MapComponent } from '../map/map.component';
 import { ModalComponent } from '../shared/modal/modal.component';
@@ -11,14 +11,13 @@ import { AlertStatusModalComponent } from '../shared/alert-status-modal/alert-st
 @Component({
   selector: 'app-alerts-detail',
   standalone: true,
-  imports: [CommonModule, MapComponent, ModalComponent, FormsModule, AlertStatusModalComponent],
+  imports: [CommonModule, MapComponent, ModalComponent, FormsModule, AlertStatusModalComponent, TitleCasePipe],
   templateUrl: './alerts-detail.component.html',
   styleUrl: './alerts-detail.component.scss'
 })
-export class AlertsDetailComponent {
+export class AlertsDetailComponent implements OnInit {
   alert: any; // Define a proper interface/type for Alert
-
-
+  isLoading: boolean = false; // Add isLoading state
 
   // Modal state for resolve
   showResolveModal: boolean = false;
@@ -28,108 +27,111 @@ export class AlertsDetailComponent {
   showCooldownModal: boolean = false;
   isCoolingDown: boolean = false;
 
-
-  // State for Trigger Alert dropdown and modal (might be less relevant for Alert Detail)
-  showAlertDropdown: boolean = false;
-  showAlertModal: boolean = false;
-  isAlerting: boolean = false;
-  alertTarget: 'resolve' | 'cooldown' | null = null;
+  // Media preview modal state
+  showMediaModal: boolean = false;
+  selectedMediaType: 'image' | 'video' | 'audio' | null = null;
+  selectedMediaUrl: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private alertService: AlertService // Inject the AlertService here
+    private alertService: AlertService
   ) { }
 
   ngOnInit(): void {
     this.getAlertDetail()
   }
 
-  getAlertDetail(){
+  getAlertDetail() {
     this.route.paramMap.subscribe(params => {
       const alertId = params.get('id');
       if (alertId) {
-        // Fetch alert data from the AlertService based on alertId
-        this.alertService.getAlert(alertId).subscribe(
-          (alertData) => {
+        this.isLoading = true; // Set isLoading to true at the start
+        this.alertService.getAlert(alertId).subscribe({
+          next: (alertData) => {
             this.alert = alertData.data;
             console.log(this.alert);
+            this.isLoading = false; // Set to false on success
           },
-          (error) => {
+          error: (error) => {
             console.error('Failed to fetch alert:', error);
             this.alert = null;
+            this.isLoading = false; // Set to false on error
           }
-        );
+        });
       }
     });
   }
 
-  // Open the validation modal
-  validateAlert(): void {
+  // Action buttons
+  openResolveModal(): void {
     this.showResolveModal = true;
   }
 
-  // Close the validation modal
-  closeValidateModal(): void {
+  closeResolveModal(): void {
     this.showResolveModal = false;
   }
 
-  // Confirm validation
-
-
-
-  // Trigger Alert Dropdown (This functionality might be less relevant for an Alert Detail page,
-  // as an alert has already been triggered. Consider if you need to re-trigger or trigger related alerts.)
-  toggleAlertDropdown(): void {
-    this.showAlertDropdown = !this.showAlertDropdown;
+  confirmResolve(): void {
+    if (!this.alert) return;
+    this.isResolving = true;
+    this.alertService.resolveAlert(this.alert.id).subscribe({
+      next: () => {
+        console.log('Alert resolved successfully.');
+        this.alert.status = 'RESOLVED';
+        this.closeResolveModal();
+      },
+      error: (err: any) => {
+        console.error('Failed to resolve alert:', err);
+      },
+      complete: () => {
+        this.isResolving = false;
+      }
+    });
   }
 
-  openAlertConfirmation(target: 'resolve' | 'cooldown'): void {
-    this.alertTarget = target;
-    this.showAlertModal = true;
-    this.showAlertDropdown = false;
+  openCooldownModal(): void {
+    this.showCooldownModal = true;
   }
 
-  closeAlertModal(): void {
-    this.showAlertModal = false;
-    this.alertTarget = null;
+  closeCooldownModal(): void {
+    this.showCooldownModal = false;
   }
 
-  confirmAlertTrigger(): void {
-    if (!this.alert || !this.alertTarget) return;
-
-    this.isAlerting = true;
-    // Call your alert service's triggerAlert method here if you want to trigger a *new* alert
-    // based on the current alert's context.
-    if (this.alertTarget === 'resolve') {
-      console.log("resolving alert")
-      this.alertService.resolveAlert(this.alert.id).subscribe({
-        next: () => {
-          this.isAlerting = false;
-          this.closeAlertModal();
-          this.getAlertDetail();
-        },
-        error: (err: any) => {
-          this.isAlerting = false;
-          alert('Failed to resolve alert: ' + (err?.error?.message || 'Unknown error'));
-        }
-      });
-    } else if (this.alertTarget === 'cooldown') {
-      console.log("cooldown alert")
-      this.alertService.cooldownAlert(this.alert.id).subscribe({
-        next: () => {
-          this.isAlerting = false;
-          this.closeAlertModal();
-        },
-        error: (err: any) => {
-          this.isAlerting = false;
-          alert('Failed to cooldown alert: ' + (err?.error?.message || 'Unknown error'));
-        }
-      });
-    }
+  confirmCooldown(): void {
+    if (!this.alert) return;
+    this.isCoolingDown = true;
+    this.alertService.cooldownAlert(this.alert.id).subscribe({
+      next: () => {
+        console.log('Alert set to cooldown successfully.');
+        this.alert.status = 'COOLDOWN';
+        this.closeCooldownModal();
+      },
+      error: (err: any) => {
+        console.error('Failed to set alert to cooldown:', err);
+      },
+      complete: () => {
+        this.isCoolingDown = false;
+      }
+    });
   }
 
   goBack(): void {
-    this.router.navigate(['/app/alerts']); // Navigate back to the alerts list
+    this.router.navigate(['/app/alerts']);
+  }
+
+  // Media preview helpers
+  openMedia(url: string): void {
+    if (!url) return;
+    // Assuming all photos are images for now. You can extend this logic for videos if needed.
+    this.selectedMediaType = 'image';
+    this.selectedMediaUrl = url;
+    this.showMediaModal = true;
+  }
+
+  closeMediaModal(): void {
+    this.showMediaModal = false;
+    this.selectedMediaType = null;
+    this.selectedMediaUrl = '';
   }
 }

@@ -1,85 +1,130 @@
-<!-- alert-detail.component.html -->
-<div *ngIf="alert" class="bg-white p-8 rounded-lg shadow-md">
-  <h1 class="text-3xl font-bold mb-6 text-gray-800">Alert Details - {{ alert.id }}</h1>
+<div class="p-8">
+  <div *ngIf="isLoading" class="flex items-center justify-center h-full min-h-[500px]">
+    <div class="flex flex-col items-center">
+      <svg class="animate-spin h-10 w-10 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span class="mt-4 text-sm font-medium text-gray-500">Loading alert details...</span>
+    </div>
+  </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <div>
-      <h2 class="text-xl font-semibold mb-2 text-gray-700">Report Information</h2>
-      <p class="text-gray-700 mb-2"><span class="font-medium">Type:</span> {{ alert.type }}</p>
-      <p class="text-gray-700 mb-2"><span class="font-medium">Description:</span> {{ alert.message }}</p>
-      <p class="text-gray-700 mb-2"><span class="font-medium">Location:</span> {{ alert.location }} (Lat: {{ alert.location_lat }}, Lng: {{ alert.location_lon }})</p>
-      <p class="text-gray-700 mb-2"><span class="font-medium">Reported By:</span> {{ alert.triggered_by_username }}</p>
-      <p class="text-gray-700 mb-2"><span class="font-medium">Reported At:</span> {{ alert.created_at | date:'medium' }}</p>
-      <p class="text-gray-700 mb-2">
-        <span class="font-medium">Current Status:</span>
+  <div *ngIf="!isLoading && alert" class="bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Alert Details</h1>
+
+    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-gray-800">Report Information</h2>
         <span [ngClass]="{
-          'px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ml-2': true,
+          'px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full': true,
           'bg-yellow-100 text-yellow-800': alert!.status === 'COOLDOWN',
-          'bg-green-100 text-green-800': alert!.status === 'ACTIVE' || alert.status === 'ACTION_TAKEN',
+          'bg-green-100 text-green-800': alert!.status === 'ACTIVE',
           'bg-gray-100 text-gray-800': alert!.status === 'RESOLVED'
         }">
           {{ alert!.status | titlecase }}
         </span>
-      </p>
-    </div>
-
-    <div>
-      <h2 class="text-xl font-semibold mb-2 text-gray-700">Attachments (Photos/Videos)</h2>
-      <div class="grid grid-cols-2 gap-4">
-        <div *ngFor="let photo of alert!.photos">
-          <img [src]="photo" alt="Alert Photo" class="w-full h-32 object-cover rounded-md shadow-sm">
-        </div>
-        <p *ngIf="!alert!.photos || alert!.photos.length === 0" class="text-gray-500">No attachments.</p>
+      </div>
+      <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+        <div><span class="font-medium">Alert ID:</span> {{ alert.id }}</div>
+        <div><span class="font-medium">Type:</span> {{ alert.type }}</div>
+        <div class="col-span-full"><span class="font-medium">Description:</span> {{ alert.message }}</div>
+        <div><span class="font-medium">Location:</span> {{ alert.location_lon }}, {{ alert.location_lat }}</div>
+        <div><span class="font-medium">Reported By:</span> {{ alert.triggered_by_username }}</div>
+        <div><span class="font-medium">Reported At:</span> {{ alert.created_at | date:'medium' }}</div>
       </div>
     </div>
 
-    <div class="col-span-full w-full">
-      <h2 class="text-xl font-semibold mt-6 mb-2 text-gray-700">Map Location</h2>
-      <!-- Assuming app-map can take 'alerts' as an input or is generic enough for 'incidents' -->
-      <app-map *ngIf="alert && alert.location_lat && alert.location_lon" [incidents]="[alert]" class="w-full"></app-map>
+    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Attachments</h2>
+      <div class="flex flex-wrap gap-4">
+        <div *ngIf="alert!.photos && alert!.photos.length > 0; else noAttachments">
+          <div *ngFor="let photo of alert!.photos" class="flex flex-col items-center">
+            <button (click)="openMedia(photo)" class="block w-24 h-16 rounded overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+              <img [src]="photo" alt="Alert Photo" class="w-full h-full object-cover" />
+            </button>
+            <p class="text-xs text-gray-500 mt-1 truncate">Image</p>
+          </div>
+        </div>
+        <ng-template #noAttachments>
+          <p class="text-gray-500">No attachments provided.</p>
+        </ng-template>
+      </div>
     </div>
-  </div>
 
-  <div class="mt-8 pt-6 border-t border-gray-200 flex space-x-4">
+    <div *ngIf="alert && alert.location_lat && alert.location_lon" class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Map Location</h2>
+      <app-map [incidents]="[alert]" class="w-full"></app-map>
+    </div>
 
-    <!-- Trigger Alert Dropdown (This might be less relevant for an Alert Detail, but kept for consistency) -->
-    <div class="relative inline-block text-left">
-      <button (click)="toggleAlertDropdown()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200 flex items-center">
-        <i class="fas fa-bell mr-2"></i> Trigger Alert (Redundant for Alert Detail)
-        <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
+    <div class="mt-8 pt-6 border-t border-gray-200 flex flex-wrap gap-4">
+      <button *ngIf="alert!.status === 'ACTIVE'" (click)="openResolveModal()" class="flex-grow md:flex-grow-0 md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200" [disabled]="isResolving">
+        <span *ngIf="!isResolving"><i class="fas fa-check mr-2"></i> Resolve Alert</span>
+        <span *ngIf="isResolving" class="flex items-center">
+          <svg class="animate-spin h-4 w-4 mr-1 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Resolving...
+        </span>
       </button>
-      <div *ngIf="showAlertDropdown" class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-        <div class="py-1">
-          <button (click)="openAlertConfirmation('resolve')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Resolve Alert</button>
-          <button (click)="openAlertConfirmation('cooldown')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cooldown Alert</button>
-        </div>
-      </div>
-    </div>
+      <button *ngIf="alert!.status === 'ACTIVE'" (click)="openCooldownModal()" class="flex-grow md:flex-grow-0 md:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200" [disabled]="isCoolingDown">
+        <span *ngIf="!isCoolingDown"><i class="fas fa-pause mr-2"></i> Set to Cooldown</span>
+        <span *ngIf="isCoolingDown" class="flex items-center">
+          <svg class="animate-spin h-4 w-4 mr-1 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Cooling down...
+        </span>
+      </button>
 
-    <button (click)="goBack()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200">
-      <i class="fas fa-arrow-left mr-2"></i> Back to List
-    </button>
+      <button (click)="goBack()" class="flex-grow md:flex-grow-0 md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200">
+        <i class="fas fa-arrow-left mr-2"></i> Back to List
+      </button>
+    </div>
   </div>
 
-  <!-- Alert Confirmation Modal (for triggering new alerts, potentially redundant for Alert Detail) -->
-  <app-alert-status-modal
-    [isVisible]="showAlertModal"
-    [title]="'Confirm Alert Trigger'"
-    [confirmButtonText]="isAlerting ? 'Loading...' : 'Confirm'"
+  <div *ngIf="!isLoading && !alert" class="text-center text-gray-500 py-10">
+    Alert not found.
+  </div>
+
+  <app-modal
+    [isVisible]="showResolveModal"
+    type="resolve"
+    [title]="'Resolve Alert: ' + (alert?.id || '')"
+    [confirmButtonText]="isResolving ? 'Resolving...' : 'Confirm Resolution'"
     [cancelButtonText]="'Cancel'"
-    (close)="closeAlertModal()"
-    (confirm)="confirmAlertTrigger()"
+    (close)="closeResolveModal()"
+    (confirm)="confirmResolve()"
   >
-    <p class="text-gray-700 mb-4">Are you sure you want to mark this alert as {{ alertTarget | titlecase }}?</p>
-    <p class="text-sm text-gray-500">This action will notify the selected group.</p>
-  </app-alert-status-modal>
+    <p class="text-gray-700 mb-4">Are you sure you want to resolve this alert?</p>
+    <p class="text-sm text-gray-500">This action will mark the alert as 'Resolved' and cannot be undone.</p>
+  </app-modal>
+
+  <app-modal
+    [isVisible]="showCooldownModal"
+    type="cooldown"
+    [title]="'Set Alert to Cooldown: ' + (alert?.id || '')"
+    [confirmButtonText]="isCoolingDown ? 'Cooling down...' : 'Confirm Cooldown'"
+    [cancelButtonText]="'Cancel'"
+    (close)="closeCooldownModal()"
+    (confirm)="confirmCooldown()"
+  >
+    <p class="text-gray-700 mb-4">Are you sure you want to set this alert to 'Cooldown' status?</p>
+    <p class="text-sm text-gray-500">The alert will remain in the system but will be temporarily inactive.</p>
+  </app-modal>
+
+  <app-modal
+    [isVisible]="showMediaModal"
+    type="preview"
+    [title]="'IMAGE'"
+    [confirmButtonText]="'Close'"
+    [cancelButtonText]="''"
+    (close)="closeMediaModal()"
+    (confirm)="closeMediaModal()"
+  >
+    <div class="w-full">
+      <img [src]="selectedMediaUrl" alt="Preview" class="w-full max-h-[70vh] object-contain rounded" />
+    </div>
+  </app-modal>
 </div>
-
-<div *ngIf="!alert" class="text-center text-gray-500 py-10">
-  Alert not found.
-</div>
-
-
-

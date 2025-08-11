@@ -1,10 +1,11 @@
+// emergency-detail.component.ts
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MapComponent } from '../map/map.component';
 import { ModalComponent } from '../shared/modal/modal.component';
 import { FormsModule } from '@angular/forms';
-import { EmergencyService } from '../services/emergency.service'; // Import the EmergencyService
+import { EmergencyService } from '../services/emergency.service';
 
 @Component({
   selector: 'app-emergency-detail',
@@ -13,8 +14,9 @@ import { EmergencyService } from '../services/emergency.service'; // Import the 
   templateUrl: './emergency-detail.component.html',
   styleUrl: './emergency-detail.component.scss'
 })
-export class EmergencyDetailComponent {
+export class EmergencyDetailComponent implements OnInit {
   emergency: any; // Define a proper interface/type for Emergency
+  isLoading: boolean = false; // Add isLoading state
 
   // Modal state for rejection
   showRejectModal: boolean = false;
@@ -37,24 +39,26 @@ export class EmergencyDetailComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private emergencyService: EmergencyService // Inject the EmergencyService here
+    private emergencyService: EmergencyService
   ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const emergencyId = params.get('id');
       if (emergencyId) {
-        // Fetch emergency data from the EmergencyService based on emergencyId
-        this.emergencyService.getEmergency(emergencyId).subscribe(
-          (emergencyData) => {
+        this.isLoading = true; // Set isLoading to true at the start
+        this.emergencyService.getEmergency(emergencyId).subscribe({
+          next: (emergencyData) => {
             this.emergency = emergencyData.data;
             console.log(this.emergency);
+            this.isLoading = false; // Set to false on success
           },
-          (error) => {
+          error: (error) => {
             console.error('Failed to fetch emergency:', error);
             this.emergency = null;
+            this.isLoading = false; // Set to false on error
           }
-        );
+        });
       }
     });
   }
@@ -75,17 +79,15 @@ export class EmergencyDetailComponent {
     this.isValidating = true;
     let payload: any = {
       "status": "VALIDATED",
-      "rejection_reason": null // Ensure rejection_reason is null for validation
+      "rejection_reason": null
     };
     this.emergencyService.validateEmergency(this.emergency.id, payload).subscribe({
       next: () => {
-        // IMPORTANT: Do NOT use alert(). Use a custom modal or message box instead.
         console.log('Emergency validated successfully.');
         this.emergency.status = 'VALIDATED';
         this.closeValidateModal();
       },
       error: (err: any) => {
-        // IMPORTANT: Do NOT use alert(). Use a custom modal or message box instead.
         console.error('Failed to validate emergency:', err);
       },
       complete: () => {
@@ -110,20 +112,17 @@ export class EmergencyDetailComponent {
   confirmReject(reason: string): void {
     if (!this.emergency) return;
     if (!reason || !reason.trim()) {
-      // IMPORTANT: Do NOT use alert(). Use a custom modal or message box instead.
       console.warn('Rejection reason is required.');
       return;
     }
     this.isRejecting = true;
     this.emergencyService.rejectEmergency(this.emergency.id, reason).subscribe({
       next: () => {
-        // IMPORTANT: Do NOT use alert(). Use a custom modal or message box instead.
         console.log('Emergency rejected successfully.');
         this.emergency.status = 'REJECTED';
         this.closeRejectModal();
       },
       error: (err: any) => {
-        // IMPORTANT: Do NOT use alert(). Use a custom modal or message box instead.
         console.error('Failed to reject emergency:', err);
       },
       complete: () => {
@@ -146,16 +145,13 @@ export class EmergencyDetailComponent {
   confirmActionTaken(): void {
     if (!this.emergency) return;
     this.isMarkingActionTaken = true;
-    // Assuming your EmergencyService has an updateEmergencyStatus method that can set 'ACTION_TAKEN'
     this.emergencyService.updateEmergencyStatus(this.emergency.id, 'ACTION_TAKEN').subscribe({
       next: () => {
-        // IMPORTANT: Do NOT use alert(). Use a custom modal or message box instead.
         console.log('Emergency marked as Action Taken successfully.');
         this.emergency.status = 'ACTION_TAKEN';
         this.closeActionTakenModal();
       },
       error: (err: any) => {
-        // IMPORTANT: Do NOT use alert(). Use a custom modal or message box instead.
         console.error('Failed to mark emergency as Action Taken:', err);
       },
       complete: () => {
@@ -165,7 +161,7 @@ export class EmergencyDetailComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/emergencies']); // Navigate back to the emergencies list
+    this.router.navigate(['/emergencies']);
   }
 
   // Media preview helpers
