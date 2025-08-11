@@ -1,114 +1,162 @@
-<div class="flex h-screen bg-gray-100">
-  <aside class="w-64 bg-gray-800 text-white flex flex-col justify-between p-4 shadow-lg">
-    <span>
-      <div class="flex items-center justify-between mb-6">
-        <div class="text-xl font-bold">EMS Dashboard</div>
-
+<div class="flex h-screen bg-gray-100 font-sans">
+  <aside class="flex flex-col w-64 bg-white border-r border-gray-200">
+    <div class="flex items-center h-20 px-6 border-b border-gray-200">
+      <div class="text-2xl font-bold text-gray-800">
+        EMS Dashboard
       </div>
-      <nav>
-        <ul class="space-y-2">
-          <li>
-            <a
-              (click)="route('/dashboard')"
-              [ngClass]="{
-                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-                'bg-gray-900 text-white': getCurrentRoute() === '/app/dashboard',
-                'hover:bg-gray-700': getCurrentRoute() !== '/app/dashboard'
-              }"
-            >
-              <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
-            </a>
-          </li>
-          <li>
-            <a
-              (click)="route('/incidents')"
-              [ngClass]="{
-                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-                'bg-gray-900 text-white': getCurrentRoute() === '/app/incidents',
-                'hover:bg-gray-700': getCurrentRoute() !== '/app/incidents'
-              }"
-            >
-              <i class="fas fa-exclamation-triangle mr-2"></i> All Incidents
-            </a>
-          </li>
-          <li>
-            <a
-              (click)="route('/alerts')"
-              [ngClass]="{
-                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-                'bg-gray-900 text-white': getCurrentRoute() === '/app/alerts',
-                'hover:bg-gray-700': getCurrentRoute() !== '/app/alerts'
-              }"
-            >
-              <i class="fas fa-bell mr-2"></i> Alerts
-            </a>
-          </li>
-          <li>
-            <a
-              (click)="route('/emergency')"
-              [ngClass]="{
-                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-                'bg-gray-900 text-white': getCurrentRoute() === '/app/emergency',
-                'hover:bg-gray-700': getCurrentRoute() !== '/app/emergency'
-              }"
-            >
-              <i class="fas fa-ambulance mr-2"></i> Emergency
-            </a>
-          </li>
-          <li>
-            <a
-              (click)="route('/maps')"
-              [ngClass]="{
-                'block py-2 px-3 cursor-pointer rounded transition-colors duration-200': true,
-                'bg-gray-900 text-white': getCurrentRoute() === '/app/maps',
-                'hover:bg-gray-700': getCurrentRoute() !== '/app/maps'
-              }"
-            >
-              <i class="fas fa-map-marked-alt mr-2"></i> Map View
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </span>
+    </div>
 
-    <button
+    <nav class="flex-1 p-6 space-y-2">
+      <ul class="space-y-2">
+        <li class="relative">
+          <a
+            (click)="route('/dashboard')"
+            [ngClass]="{
+              'flex items-center px-4 py-2 text-gray-600 rounded-lg transition-colors duration-200 group': true,
+              'bg-gray-100 text-teal-600': getCurrentRoute() === '/app/dashboard',
+              'hover:bg-gray-50 hover:text-teal-600': getCurrentRoute() !== '/app/dashboard'
+            }"
+          >
+            <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
+            <span class="text-sm font-medium">Dashboard</span>
+            <span
+              *ngIf="getCurrentRoute() === '/app/dashboard'"
+              class="absolute right-0 h-full w-1 bg-teal-500 rounded-lg transform translate-x-2"
+            ></span>
+          </a>
+        </li>
+        <li class="relative">
+          <a
+            (click)="route('/incidents')"
+            [ngClass]="{
+              'flex items-center px-4 py-2 text-gray-600 rounded-lg transition-colors duration-200 group': true,
+              'bg-gray-100 text-teal-600': getCurrentRoute() === '/app/incidents',
+              'hover:bg-gray-50 hover:text-teal-600': getCurrentRoute() !== '/app/incidents'
+            }"
+          >
+            <i class="fas fa-exclamation-triangle mr-3 text-lg"></i>
+            <span class="text-sm font-medium">All Incidents</span>
+            <span
+              *ngIf="getCurrentRoute() === '/app/incidents'"
+              class="absolute right-0 h-full w-1 bg-teal-500 rounded-lg transform translate-x-2"
+            ></span>
+          </a>
+        </li>
+        <li class="relative">
+          <a
+            (click)="route('/alerts')"
+            [ngClass]="{
+              'flex items-center px-4 py-2 text-gray-600 rounded-lg transition-colors duration-200 group': true,
+              'bg-gray-100 text-teal-600': getCurrentRoute() === '/app/alerts',
+              'hover:bg-gray-50 hover:text-teal-600': getCurrentRoute() !== '/app/alerts'
+            }"
+          >
+            <i class="fas fa-bell mr-3 text-lg"></i>
+            <span class="text-sm font-medium">Alerts</span>
+            <span
+              *ngIf="getCurrentRoute() === '/app/alerts'"
+              class="absolute right-0 h-full w-1 bg-teal-500 rounded-lg transform translate-x-2"
+            ></span>
+          </a>
+        </li>
+        <li class="relative">
+          <a
+            (click)="route('/emergency')"
+            [ngClass]="{
+              'flex items-center px-4 py-2 text-gray-600 rounded-lg transition-colors duration-200 group': true,
+              'bg-gray-100 text-teal-600': getCurrentRoute() === '/app/emergency',
+              'hover:bg-gray-50 hover:text-teal-600': getCurrentRoute() !== '/app/emergency'
+            }"
+          >
+            <i class="fas fa-ambulance mr-3 text-lg"></i>
+            <span class="text-sm font-medium">Emergency</span>
+            <span
+              *ngIf="getCurrentRoute() === '/app/emergency'"
+              class="absolute right-0 h-full w-1 bg-teal-500 rounded-lg transform translate-x-2"
+            ></span>
+          </a>
+        </li>
+        <li class="relative">
+          <a
+            (click)="route('/maps')"
+            [ngClass]="{
+              'flex items-center px-4 py-2 text-gray-600 rounded-lg transition-colors duration-200 group': true,
+              'bg-gray-100 text-teal-600': getCurrentRoute() === '/app/maps',
+              'hover:bg-gray-50 hover:text-teal-600': getCurrentRoute() !== '/app/maps'
+            }"
+          >
+            <i class="fas fa-map-marked-alt mr-3 text-lg"></i>
+            <span class="text-sm font-medium">Map View</span>
+            <span
+              *ngIf="getCurrentRoute() === '/app/maps'"
+              class="absolute right-0 h-full w-1 bg-teal-500 rounded-lg transform translate-x-2"
+            ></span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="p-6 border-t border-gray-200">
+      <button
         (click)="logout()"
-        class="text-sm bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded"
+        class="w-full flex items-center justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none transition-colors duration-200"
         aria-label="Logout"
       >
-        Logout
-      </button>
-  </aside>
-
-  <main class="flex-1 overflow-auto p-6">
-    <!-- Notification Icon with Count -->
-    <div class="relative flex justify-end w-full mb-4">
-      <button
-        (click)="showNotifications()"
-        class="focus:outline-none relative p-2 hover:bg-gray-200 rounded-full transition-colors"
-        aria-label="Notifications"
-      >
-        <i class="fas fa-bell text-2xl text-gray-700"></i>
-        <span
-          *ngIf="(unreadCount$ | async) as count; else noCount"
-          class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]"
-        >
-          {{ count > 99 ? '99+' : count }}
-        </span>
-        <ng-template #noCount></ng-template>
-
-        <!-- Test button for debugging -->
-        <!-- <button
-          (click)="showNotifications()"
-          class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded"
-        >
-          Test Modal
-        </button> -->
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
       </button>
     </div>
-    <router-outlet></router-outlet>
-  </main>
+  </aside>
 
-  <!-- Notification Modal -->
-  <app-notification-modal #notificationModal></app-notification-modal>
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200">
+      <div class="flex flex-col">
+        <h1 class="text-2xl font-bold text-gray-800">Campaign</h1>
+        <p class="text-sm text-gray-500 mt-1">See how much campaign do you have</p>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Search something..."
+            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500"
+          >
+          <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+
+        <div class="relative">
+          <button
+            (click)="showNotifications()"
+            class="relative p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+            aria-label="Notifications"
+          >
+            <i class="fas fa-bell text-lg"></i>
+            <span
+              *ngIf="(unreadCount$ | async) as count"
+              class="absolute top-0 right-0 transform translate-x-1 -translate-y-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center"
+            >
+              {{ count > 99 ? '99+' : count }}
+            </span>
+          </button>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <div class="flex flex-col text-right">
+            <span class="text-sm font-semibold text-gray-800">Justinus Lhakasana</span>
+            <span class="text-xs text-gray-500">justinusl#email.com</span>
+          </div>
+          <img
+            class="h-10 w-10 rounded-full cursor-pointer border border-gray-300"
+            src="https://via.placeholder.com/150"
+            alt="User profile"
+          >
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+      <router-outlet></router-outlet>
+      <app-notification-modal #notificationModal></app-notification-modal>
+    </main>
+  </div>
 </div>
