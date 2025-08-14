@@ -67,16 +67,18 @@
                 </div>
 
                 <div class="mt-1 text-sm text-gray-600">
-                  <div *ngIf="notification.data.emergency_id">
+                  <div *ngIf="notification.data.emergency_id" class="flex justify-between items-center">
                     Emergency ID: {{ notification.data.emergency_id }}
+                    <p (click)="route(`/emergency/${notification.data.emergency_id}`)">View</p>
                   </div>
-                  <div *ngIf="notification.data.incident_id">
+                  <div *ngIf="notification.data.incident_id" class="flex justify-between items-center">
                     Incident ID: {{ notification.data.incident_id }}
+                    <p (click)="route(`/incidents/${notification.data.incident_id}`)">View</p>
                   </div>
-                  <div *ngIf="notification.data.type">
+                  <div *ngIf="notification.data.type" class="flex justify-between items-center">
                     Type: {{ notification.data.type }}
                   </div>
-                  <div *ngIf="notification.data.status">
+                  <div *ngIf="notification.data.status" class="flex justify-between items-center">
                     Status: {{ notification.data.status }}
                   </div>
                 </div>

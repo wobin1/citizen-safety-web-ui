@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { NotificationService, Notification } from '../../services/notification.service';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-notification-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './notification-modal.component.html',
   styleUrls: ['./notification-modal.component.scss']
 })
@@ -15,7 +16,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   isVisible = false;
   private subscription = new Subscription();
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(private notificationService: NotificationService, private router:Router) {}
 
   ngOnInit(): void {
     console.log('Notification modal ngOnInit called');
@@ -25,6 +26,10 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
         this.notifications = notifications;
       })
     );
+  }
+
+  route(page:string){
+    this.router.navigate([page])
   }
 
   ngOnDestroy(): void {
