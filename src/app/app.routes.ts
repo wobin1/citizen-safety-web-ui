@@ -12,10 +12,14 @@ import { AlertsDetailComponent } from './alerts-detail/alerts-detail.component';
 import { EmergencyListComponent } from './emergency-list/emergency-list.component';
 import { EmergencyDetailComponent } from './emergency-detail/emergency-detail.component';
 import { MapViewComponent } from './map-view/map-view.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 export const routes: Routes = [
   { path: 'auth', component: AuthComponent, children: [
     { path: 'login', component: LoginComponent },
+    { path: 'forgot-password', component: ForgotPasswordComponent },
+    { path: 'reset-password', component: ResetPasswordComponent },
   ]},
   { path: 'app', component: MainComponent, children: [
     { path: 'dashboard', component: DashboardComponent , canActivate: [authGuard] },

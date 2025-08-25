@@ -86,7 +86,7 @@ export class AuthService {
   // Login method
   login(username: string, password: string): Observable<AuthResponse> {
     // In a real app, send credentials to your backend login endpoint
-    return this.http.post<AuthResponse>(`${this.apiUrl}auth/login`, { username, password }).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}auth/login`, { email_or_username: username, password }).pipe(
       tap(response => {
         // Store token and user data in localStorage
         localStorage.setItem('authToken', response.data.token);
@@ -103,6 +103,29 @@ export class AuthService {
         this.logout();
         this._isLoggedIn.next(false);
         return throwError(() => new Error(error.error?.message || 'Login failed'));
+      })
+    );
+  }
+
+  // Forgot password method
+  forgotPassword(email: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}auth/forgot-password`, { email }).pipe(
+      catchError(error => {
+        console.error('Forgot password failed in AuthService:', error);
+        return throwError(() => new Error(error.error?.message || 'Failed to send reset email'));
+      })
+    );
+  }
+
+  // Reset password method
+  resetPassword(token: string, newPassword: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}auth/reset-password`, { 
+      token, 
+      new_password: newPassword 
+    }).pipe(
+      catchError(error => {
+        console.error('Reset password failed in AuthService:', error);
+        return throwError(() => new Error(error.error?.message || 'Failed to reset password'));
       })
     );
   }
